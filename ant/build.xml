@@ -1,0 +1,337 @@
+<project default="help" basedir="..">
+  <!-- Cleanup classes and build directory, create all directories -->
+  <target name="prepare">
+    <condition property="project.external.config">
+      <and>
+        <available file="${idea.home}" type="dir"/>
+        <isset property="project.name"/>
+      </and>
+    </condition>
+    <fail unless="project.external.config">
+      External properties not set or have wrong values
+      This ant build must be run with -Didea.home=.. -Dproject.name=..
+      Where:
+        idea.home    contains full path to IntelliJ idea home directory.
+        project.name contains name of IntelliJ idea project. This name will be
+                     used in output jar file name.
+      Currently properties is:
+      idea.home = ${idea.home}
+      project.name = ${project.name}
+    </fail>
+
+    <property name="project.ant" value="ant"/>
+    <property name="project.lib" value="lib"/>
+    <property name="project.docs" value="docs"/>
+    <property name="project.src" value="src"/>
+    <property name="project.classes" value="classes"/>
+    <property name="project.build" value="build"/>
+    <property name="project.build.resources" value="${project.build}/resources"/>
+    <property name="project.build.temp" value="${project.build}/temp"/>
+    <!-- JavaDoc packages properties -->
+    <property name="project.javadoc.jdk.url" value="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+    <property name="project.javadoc.jdk.package" value="${project.ant}/api-files/jdk1.4.2"/>
+
+
+    <tstamp>
+      <format property="build.date" pattern="MMMM d, yyyy" locale="en"/>
+    </tstamp>
+
+    <!-- Load properties -->
+    <property file="${project.ant}/build.properties"/>
+
+    <!-- Check if uidesigner javac enabled -->
+    <condition property="project.uidesigner.compiler">
+      <or>
+        <and>
+          <available file="${idea.uidesigner.home}/javac2.jar" />
+          <isset property="build.uidesigner.javac"/>
+        </and>
+        <not>
+          <isset property="build.uidesigner.javac"/>
+        </not>
+      </or>
+    </condition>
+    <fail unless="project.uidesigner.compiler">
+      Problems in UI designer ANT task installation.
+      Please, check that files exists:
+        ${idea.uidesigner.home}/javac2.jar
+      If you have not these files please get latest EAP from
+      http://www.intellij.net/eap
+      To set idea.uidesigner.home property, please edit
+      ant/build.properties file.
+    </fail>
+
+    <!-- Project classpath -->
+    <path id="project.classpath">
+      <fileset dir="${basedir}">
+        <include name="${project.lib}/*.jar"/>
+      </fileset>
+      <fileset dir="${idea.home}">
+        <include name="lib/hotfixes/*.jar"/>
+        <include name="lib/*.jar"/>
+      </fileset>
+      <pathelement path="${idea.uidesigner.home}/javac2.jar" />
+    </path>
+
+    <taskdef
+      name="uidesigner"
+      classname="com.intellij.uiDesigner.ant.Javac2"
+      classpathref="project.classpath"
+    />
+
+    <!-- Project filter set -->
+    <filterset id="project.filter">
+      <filter token="project.name" value="${project.name}"/>
+      <filter token="plugin.author" value="${plugin.author}"/>
+      <filter token="plugin.author.email" value="${plugin.author.email}"/>
+      <filter token="plugin.author.url" value="${plugin.author.url}"/>
+      <filter token="plugin.name" value="${plugin.name}"/>
+      <filter token="plugin.description" value="${plugin.description}"/>
+      <filter token="plugin.url" value="${plugin.url}"/>
+      <filter token="plugin.version" value="${plugin.version}"/>
+      <filter token="plugin.version.notes" value="${plugin.version.notes}"/>
+    </filterset>
+
+    <delete quiet="true" includeemptydirs="true">
+      <fileset dir="${project.build}">
+        <include name="**/**"/>
+        <include name="**/*.*"/>
+      </fileset>
+    </delete>
+    <delete quiet="true" includeemptydirs="true">
+      <fileset dir="${project.classes}">
+        <include name="**/**"/>
+        <include name="**/*.*"/>
+      </fileset>
+    </delete>
+
+    <mkdir dir="${project.classes}"/>
+    <mkdir dir="${project.build}"/>
+    <mkdir dir="${project.build}/${project.name}"/>
+    <mkdir dir="${project.build}/${project.name}/lib"/>
+    <!-- Build resources files (all other resources) -->
+    <mkdir dir="${project.build.resources}"/>
+  </target>
+
+  <!-- Help -->
+  <target name="help">
+    <echo>
+      ${ant.version} (JDK ${ant.java.version})
+      ${ant.file}:
+        javadoc   - Generate javadoc information for project
+        binaries  - Build plugin binaries
+        sources   - Archive sources package
+        all       - Build plugin binaries and source distributive
+    </echo>
+  </target>
+
+  <!-- Convert native files -->
+  <target name="native2ascii" depends="prepare" if="build.native2ascii">
+    <mkdir dir="${project.build.temp}"/>
+    <!-- Perform native conversion for 'native' files -->
+    <copy todir="${project.build.temp}">
+      <mapper type="glob" from="${build.native2ascii.pattern}" to="*.native"/>
+      <fileset dir="${project.src}">
+        <include name="**/${build.native2ascii.pattern}"/>
+      </fileset>
+    </copy>
+    <native2ascii
+      src="${project.build.temp}"
+      dest="${project.build.temp}"
+      includes="**/*.native"
+      ext=".properties"/>
+    <copy todir="${project.build.resources}">
+      <fileset dir="${project.build.temp}">
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
+  </target>
+  <!-- UI compiling -->
+  <target name="uidesigner" depends="prepare, uidesigner.compile" if="build.uidesigner.javac">
+  </target>
+
+  <target name="uidesigner.compile" depends="prepare, compile">
+    <uidesigner
+      destdir="${project.classes}"
+      classpathref="project.classpath"
+      debug="on"
+      source="1.4"
+      >
+      <src path="${project.src}"/>
+      <include name="**/*.form"/>
+    </uidesigner>
+    <!-- Copy forms_rt.jar -->
+    <copy file="${idea.uidesigner.home}/forms_rt.jar" todir="${project.build}/${project.name}/lib" />
+  </target>
+
+  <!-- Binaries -->
+  <target name="binaries" depends="prepare, uidesigner, compile, native2ascii">
+    <!-- Increment build number -->
+    <buildnumber file="${project.ant}/build"/>
+    <filterset id="project.build.filter">
+        <filter token="build.number" value="${build.number}"/>
+        <filter token="build.date" value="${build.date}"/>
+    </filterset>
+
+    <!-- Copy to compiled classes XML file desriptors the java sources -->
+    <copy todir="${project.classes}" includeemptydirs="no">
+      <fileset dir="${project.src}">
+        <include name="META-INF/*.xml"/>
+      </fileset>
+      <filterset refid="project.filter"/>
+      <filterset refid="project.build.filter"/>
+    </copy>
+
+    <!-- Build main jar with classes and XML descriptors in META-INF -->
+    <jar jarfile="${project.build}/${project.name}/lib/${build.jar.classes.prefix}.jar" basedir="${project.classes}" compress="true" filesonly="true">
+      <manifest>
+        <attribute name="Build" value="${build.number}"/>
+        <attribute name="Build-Info" value="Builded ${build.date} by ${plugin.author}, ${user.country}, ${user.timezone}"/>
+      </manifest>
+    </jar>
+
+    <!-- Binary files -->
+    <copy todir="${project.build.resources}" includeemptydirs="no">
+      <fileset dir="${project.src}">
+        <exclude name="META-INF/*.xml"/>
+        <exclude name="**/*.properties"/>
+        <exclude name="**/*.txt"/>
+        <exclude name="**/*.java"/>
+        <exclude name="**/*.form"/>
+        <!-- Photoshop sources -->
+        <exclude name="**/*.psd"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/${build.native2ascii.pattern}" if="build.native2ascii" />
+      </fileset>
+    </copy>
+    <!-- Text files -->
+    <copy todir="${project.build.resources}" includeemptydirs="no">
+      <fileset dir="${project.src}">
+        <include name="**/*.xml"/>
+        <include name="**/*.properties"/>
+        <include name="**/*.txt"/>
+        <exclude name="META-INF/*.xml"/>
+        <exclude name="**/${build.native2ascii.pattern}" if="build.native2ascii" />
+      </fileset>
+      <filterset refid="project.filter"/>
+      <filterset refid="project.build.filter"/>
+    </copy>
+
+    <condition property="build.jar.resources.update">
+      <and>
+        <available file="${project.build}/${project.name}/lib/${build.jar.resources.prefix}.jar" type="file"/>
+      </and>
+    </condition>
+
+    <jar
+      jarfile="${project.build}/${project.name}/lib/${build.jar.resources.prefix}.jar"
+      basedir="${project.build.resources}" compress="true"
+      update="${build.jar.resources.update}" />
+
+
+    <!-- Generate files from templates -->
+    <copy todir="${project.build}/${project.name}">
+      <fileset dir="${project.ant}/templates">
+        <include name="*.txt"/>
+      </fileset>
+      <filterset refid="project.filter"/>
+    </copy>
+
+    <!-- Copy project lib JARs -->
+    <copy todir="${project.build}/${project.name}/lib">
+      <fileset dir="${project.lib}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </copy>
+
+    <!-- Build ZIP distributive -->
+    <zip zipfile="${project.build}/${build.prefix}.zip" basedir="${project.build}" compress="true">
+      <include name="${project.name}/*.*"/>
+      <include name="${project.name}/lib/*.*"/>
+      <include name="${project.name}/docs/**/*.*" if="build.binaries.docs"/>
+    </zip>
+  </target>
+
+  <target name="compile" depends="prepare">
+    <javac
+      destdir="${project.classes}"
+      classpathref="project.classpath"
+      debug="on"
+      source="1.4"
+      >
+      <src path="${project.src}"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
+  <!-- Source -->
+  <target name="sources" depends="prepare, native2ascii">
+    <zip zipfile="${project.build}/${build.prefix}-src.zip" basedir="${basedir}" compress="true">
+      <include name="*.*"/>
+      <include name="${project.src}/**/*.*"/>
+      <include name="${project.src}/**/*"/>
+      <include name="${project.docs}/**/*.*"/>
+      <include name="${project.docs}/**/*"/>
+      <include name="${project.lib}/**/*.*"/>
+      <include name="${project.lib}/**/*"/>
+      <include name="ant/**/*.*"/>
+      <include name="ant/**/*"/>
+    </zip>
+  </target>
+
+  <!-- API JavaDocs and Documentation -->
+  <target name="javadoc" depends="prepare">
+    <!-- Prepare directory -->
+    <mkdir dir="${project.build}/${project.name}/docs/api"/>
+    <!-- JavaDocs -->
+    <javadoc
+      destdir="${project.build}/${project.name}/docs/api"
+      author="true"
+      version="true"
+      use="true"
+      source="1.4"
+      classpathref="project.classpath"
+      sourcepath="${project.src}">
+      <packageset dir="${project.src}">
+        <exclude name="**/impl" />
+      </packageset>
+    </javadoc>
+  </target>
+
+  <target name="docs" depends="prepare, javadoc" if="build.docs">
+    <!-- Fix up for javadocs -->
+    <replaceregexp flags="ig" match="href=\&quot;[^\&quot;]+http\:\/\/" replace="href=\&quot;http\:\/\/">
+      <fileset dir="${project.build}/${project.name}/docs/api" includes="**/*.html"/>
+    </replaceregexp>
+    <!-- Check that project directory exists -->
+    <mkdir dir="${project.docs}" />
+    <copy todir="${project.build}/${project.name}/docs">
+      <fileset dir="${project.docs}">
+        <include name="**/*.*"/>
+        <include name="**"/>
+      </fileset>
+    </copy>
+    <zip zipfile="${project.build}/${build.prefix}-docs.zip" basedir="${project.build}" compress="true">
+      <include name="${project.name}/docs/**/*.*" unless="build.binaries.docs"/>
+    </zip>
+  </target>
+
+  <!-- Coping binaries to IntelliJ plugins folder -->
+  <target name="deploy" depends="binaries">
+    <!-- Please change folder if you are using different folder for yor installation -->
+    <delete quiet="true" includeemptydirs="true">
+      <fileset dir="${idea.plugins.home}/${project.name}">
+        <include name="**/**"/>
+        <include name="**/*.*"/>
+      </fileset>
+    </delete>
+    <copy todir="${idea.plugins.home}" overwrite="true">
+      <fileset dir="${project.build}">
+        <include name="${project.name}/**/*.*"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Distribute -->
+  <target name="all" depends="prepare, docs, sources, binaries"/>
+</project>
