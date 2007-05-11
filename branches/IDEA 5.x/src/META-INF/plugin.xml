@@ -1,0 +1,19 @@
+<idea-plugin url="@plugin.url@">
+  <vendor url="@plugin.author.url@" email="@plugin.author.email@">@plugin.author@</vendor>
+  <name>@plugin.name@</name>
+  <description>@plugin.description@</description>
+  <version build="@build.number@" build-date="@build.date@">@plugin.version@</version>
+  <change-notes><![CDATA[<html><pre>@plugin.version.notes@</pre></html>]]></change-notes>
+
+  <idea-version min="4.0" max="4.1"/>
+  <application-components>
+    <component>
+      <implementation-class>org.intellij.apiComparator.ComparatorManager</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.intellij.apiComparator.ComparatorConfiguration</implementation-class>
+    </component>
+  </application-components>
+
+</idea-plugin>
+
