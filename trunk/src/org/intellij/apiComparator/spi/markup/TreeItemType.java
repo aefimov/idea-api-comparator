@@ -1,7 +1,7 @@
 /* $Id$ */
 package org.intellij.apiComparator.spi.markup;
 
-import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import org.phantom.lang.Enum;
 import org.phantom.lang.Strings;
 import org.phantom.swing.IconLoader;
@@ -15,8 +15,8 @@ import javax.swing.*;
  * @version $Revision$
  */
 public final class TreeItemType extends Enum implements Comparable {
-    public static final TreeItemType UNKNOWN = new TreeItemType(-1, -1, FileType.UNKNOWN.getIcon());
-    public static final TreeItemType ARCHIVE = new TreeItemType(0, 0, FileType.ARCHIVE.getIcon());
+    public static final TreeItemType UNKNOWN = new TreeItemType(-1, -1, StdFileTypes.UNKNOWN.getIcon());
+    public static final TreeItemType ARCHIVE = new TreeItemType(0, 0, StdFileTypes.ARCHIVE.getIcon());
     public static final TreeItemType FOLDER = new TreeItemType(1, 0, "/nodes/folder.png", "/nodes/folderOpen.png");
     public static final TreeItemType PACKAGE = new TreeItemType(
         2, 1, "/nodes/packageClosed.png", "/nodes/packageOpen.png"

@@ -1,5 +1,5 @@
 /* $Id$ */
-package org.intellij.apiComparator.spi.nodes.bcel;
+package org.intellij.apiComparator.spi.nodes;
 
 /**
  * Utility for checking obfuscated code.

@@ -4,8 +4,8 @@ package org.intellij.apiComparator.actions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataConstants;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -55,10 +55,10 @@ public class LoadShapshotAction extends AnAction {
         // Standard action
         JFileChooser jfc = new JFileChooser();
         jfc.addChoosableFileFilter(
-            new FileTypeFilter(FileType.ARCHIVE, "comparator.fileChooser.snapshot.filter.zip.description")
+            new FileTypeFilter(StdFileTypes.ARCHIVE, "comparator.fileChooser.snapshot.filter.zip.description")
         );
         jfc.addChoosableFileFilter(
-            new FileTypeFilter(FileType.XML, "comparator.fileChooser.snapshot.filter.xml.description")
+            new FileTypeFilter(StdFileTypes.XML, "comparator.fileChooser.snapshot.filter.xml.description")
         );
         jfc.setDialogTitle(Plugin.localizer.getString("comparator.fileChooser.snapshot.open.title"));
         jfc.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -77,7 +77,7 @@ public class LoadShapshotAction extends AnAction {
                 } else {
                     // Write file
                     try {
-                        ApplicationManager.getApplication().runProcessWithProgressSynchronously(
+                        ProgressManager.getInstance().runProcessWithProgressSynchronously(
                             new Runnable() {
                                 public void run() {
                                     InputStream inputStream = null;
@@ -93,7 +93,7 @@ public class LoadShapshotAction extends AnAction {
                                         );
 
                                         inputStream = new FileInputStream(file);
-                                        if (fileType.equals(FileType.ARCHIVE)) {
+                                        if (fileType.equals(StdFileTypes.ARCHIVE)) {
                                             inputStream = new ZipInputStream(inputStream);
                                             ((ZipInputStream)inputStream).getNextEntry();
                                         }

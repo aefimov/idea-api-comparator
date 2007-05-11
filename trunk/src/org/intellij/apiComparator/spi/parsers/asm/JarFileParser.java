@@ -1,30 +1,36 @@
-package org.intellij.apiComparator.spi.parsers;
+package org.intellij.apiComparator.spi.parsers.asm;
 
-import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.JavaClass;
 import org.intellij.apiComparator.spi.markup.TreeItemType;
 import org.intellij.apiComparator.spi.nodes.TreeItem;
 import org.intellij.apiComparator.spi.nodes.TreeItemAttributes;
-import org.intellij.apiComparator.spi.nodes.bcel.JavaClassTreeItem;
+import org.intellij.apiComparator.spi.nodes.asm.JavaClassTreeItem;
+import org.intellij.apiComparator.spi.parsers.AbstractTreeParser;
+import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
  * The JAR tree loader implementation.
- * 
- * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
+ *
+ * @author <a href="mailto:thibaut.fagart@gmail.com">Thibaut Fagart</a>
  * @see com.intellij.openapi.command.CommandAdapter
  */
 class JarFileParser extends AbstractTreeParser {
-    /** Class file extension */
+    /**
+     * Class file extension
+     */
     private static final String CLASS_EXT = ".class";
 
-    /** Map with all classes links in jar to track inners */
-    private SortedMap classes = new TreeMap();
+    /**
+     * Map with all classes links in jar to track inners
+     */
+    private SortedMap<String, TreeItem> classes = new TreeMap<String, TreeItem>();
     private static final char INNER_SEPARATOR = '$';
 
     public JarFileParser(JarFile jarFile) {
@@ -40,19 +46,20 @@ class JarFileParser extends AbstractTreeParser {
         setCurrentItem(root);
 
         try {
-            Enumeration enumeration = ((JarFile)source).entries();
+            Enumeration<JarEntry> enumeration = ((JarFile)source).entries();
 
             while (enumeration.hasMoreElements()) {
 
-                JarEntry jarEntry = (JarEntry)enumeration.nextElement();
+                JarEntry jarEntry = enumeration.nextElement();
                 String entryName = jarEntry.getName();
 
                 if (entryName.endsWith(CLASS_EXT)) {
 
                     InputStream inputStream = ((JarFile)source).getInputStream(jarEntry);
                     try {
-                        JavaClass javaClass = new ClassParser(inputStream, entryName).parse();
-                        TreeItem rootPackage = parserManager.getParser(javaClass).parse();
+                        ClassReader classReader = new ClassReader(inputStream);
+
+                        TreeItem rootPackage = parserManager.getParser(classReader).parse();
                         if (rootPackage != null) {
                             TreeItem classItem = slideDown(rootPackage);
                             String name = classItem.toString();
@@ -81,17 +88,15 @@ class JarFileParser extends AbstractTreeParser {
         }
 
         // Append Inners
-        Iterator names = classes.keySet().iterator();
-        while (names.hasNext()) {
-            String name = (String)names.next();
-            int innerIndex = name.lastIndexOf(INNER_SEPARATOR);
+        for (String className : classes.keySet()) {
+            int innerIndex = className.lastIndexOf(INNER_SEPARATOR);
             if (innerIndex != -1) {
-                String parrentName = name.substring(0, innerIndex);
-                TreeItem parent = (TreeItem)classes.get(parrentName);
+                String parentName = className.substring(0, innerIndex);
+                TreeItem parent = classes.get(parentName);
                 if (parent != null) {
-                    TreeItem item = (TreeItem)classes.get(name);
-                    // Change name
-                    String innerName = name.substring(innerIndex + 1);
+                    TreeItem item = classes.get(className);
+                    // Change className
+                    String innerName = className.substring(innerIndex + 1);
                     // Skip annonimous classes
                     if (!innerName.matches("^\\d+$")) {
                         item.setAttribute(TreeItemAttributes.ATTR_NAME, innerName);

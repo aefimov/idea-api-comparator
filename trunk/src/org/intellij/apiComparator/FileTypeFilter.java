@@ -2,6 +2,7 @@
 package org.intellij.apiComparator;
 
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
@@ -39,7 +40,7 @@ public class FileTypeFilter extends FileFilter {
         if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
             String extension = fileName.substring(dotIndex + 1);
 
-            return Arrays.asList(fileType.getAssociatedExtensions()).contains(extension);
+            return Arrays.asList(FileTypeManager.getInstance().getAssociatedExtensions(fileType)).contains(extension);
         }
         return false;
     }

@@ -155,7 +155,7 @@
       destdir="${project.classes}"
       classpathref="project.classpath"
       debug="on"
-      source="1.4"
+      source="1.5"
       >
       <src path="${project.src}"/>
       <include name="**/*.form"/>
@@ -257,7 +257,7 @@
       destdir="${project.classes}"
       classpathref="project.classpath"
       debug="on"
-      source="1.4"
+      source="1.5"
       >
       <src path="${project.src}"/>
       <include name="**/*.java"/>
@@ -289,7 +289,7 @@
       author="true"
       version="true"
       use="true"
-      source="1.4"
+      source="1.5"
       classpathref="project.classpath"
       sourcepath="${project.src}">
       <packageset dir="${project.src}">
