@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -56,10 +57,10 @@ public class CreateShapshotAction extends AnAction {
             JFileChooser jfc = new JFileChooser();
             jfc.setAcceptAllFileFilterUsed(false);
             jfc.addChoosableFileFilter(
-                new FileTypeFilter(FileType.XML, "comparator.fileChooser.snapshot.filter.xml.description")
+                new FileTypeFilter(StdFileTypes.XML, "comparator.fileChooser.snapshot.filter.xml.description")
             );
             jfc.addChoosableFileFilter(
-                new FileTypeFilter(FileType.ARCHIVE, "comparator.fileChooser.snapshot.filter.zip.description")
+                new FileTypeFilter(StdFileTypes.ARCHIVE, "comparator.fileChooser.snapshot.filter.zip.description")
             );
             jfc.setDialogTitle(Plugin.localizer.getString("comparator.fileChooser.snapshot.save.title"));
             jfc.setDialogType(JFileChooser.SAVE_DIALOG);
@@ -104,7 +105,7 @@ public class CreateShapshotAction extends AnAction {
                         if (canWrite) {
                             // Write file
                             final File snapshotFile = file;
-                            ApplicationManager.getApplication().runProcessWithProgressSynchronously(
+                            ProgressManager.getInstance().runProcessWithProgressSynchronously(
                                 new Runnable() {
                                     public void run() {
                                         try {
@@ -113,7 +114,7 @@ public class CreateShapshotAction extends AnAction {
                                                 ProgressManager progressManager = ProgressManager.getInstance();
                                                 ProgressIndicator indicator = progressManager.getProgressIndicator();
 
-                                                if (fileType.equals(FileType.ARCHIVE)) {
+                                                if (fileType.equals(StdFileTypes.ARCHIVE)) {
                                                     outputStream = new ZipOutputStream(outputStream);
                                                     ((ZipOutputStream)outputStream).putNextEntry(
                                                         new ZipEntry("snapshot.xml")
@@ -140,7 +141,7 @@ public class CreateShapshotAction extends AnAction {
                                                     )
                                                 );
                                                 // Write to file
-                                                JDOMUtil.writeDocument(new Document(element), outputStream);
+                                                JDOMUtil.writeDocument(new Document(element), outputStream, "\n");
                                             } finally {
                                                 outputStream.close();
                                             }

@@ -10,7 +10,7 @@ import java.util.List;
  * 
  * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
  */
-abstract class AbstractTreeParser implements TreeParser, Runnable {
+public abstract class AbstractTreeParser implements TreeParser, Runnable {
     /**
      * Listeners
      */

@@ -1,7 +1,6 @@
-package org.intellij.apiComparator.spi.nodes.bcel;
+package org.intellij.apiComparator.spi.nodes;
 
 import org.intellij.apiComparator.spi.markup.TreeItemType;
-import org.intellij.apiComparator.spi.nodes.TreeItem;
 
 /**
  * <p>Package tree item

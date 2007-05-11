@@ -1,7 +1,5 @@
 /* $Id$ */
-package org.intellij.apiComparator.spi.nodes.bcel;
-
-import org.intellij.apiComparator.spi.nodes.TreeItem;
+package org.intellij.apiComparator.spi.nodes;
 
 /**
  * @author <a href="mailto:aefimov@tengry.com">Alexey Efimov</a>

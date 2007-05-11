@@ -1,12 +1,13 @@
-package org.intellij.apiComparator.spi.parsers;
+package org.intellij.apiComparator.spi.parsers.asm;
 
-import org.apache.bcel.classfile.JavaClass;
+import org.intellij.apiComparator.spi.parsers.TreeParser;
+import org.objectweb.asm.ClassReader;
 
 import java.util.jar.JarFile;
 
 /**
  * Manager for tree parsers.
- * 
+ *
  * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
  */
 public class TreeParserManager {
@@ -22,7 +23,7 @@ public class TreeParserManager {
         return instance;
     }
 
-    public TreeParser getParser(JavaClass source) {
+    public TreeParser getParser(ClassReader source) {
         return new JavaClassParser(source);
     }
 

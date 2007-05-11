@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diff.DiffContent;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -25,9 +24,9 @@ import org.intellij.apiComparator.spi.markup.TreeItemMarker;
 import org.intellij.apiComparator.spi.nodes.TreeItem;
 import org.intellij.apiComparator.spi.nodes.TreeItemAttributes;
 import org.intellij.apiComparator.spi.parsers.TreeParser;
-import org.intellij.apiComparator.spi.parsers.TreeParserEvent;
 import org.intellij.apiComparator.spi.parsers.TreeParserListener;
-import org.intellij.apiComparator.spi.parsers.TreeParserManager;
+import org.intellij.apiComparator.spi.parsers.TreeParserEvent;
+import org.intellij.apiComparator.spi.parsers.asm.TreeParserManager;
 import org.intellij.apiComparator.tree.TreeItemModel;
 import org.intellij.apiComparator.tree.TreeItemRenderer;
 import org.phantom.lang.Strings;
@@ -156,8 +155,6 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
         actions.add(new LoadShapshotAction(ui.getResultTree()));
         actions.addSeparator();
         actions.add(new ClearRecentListAction());
-        actions.addSeparator();
-        actions.add(new AboutAction());
 
         ActionToolbar toolbar = actionManager.createActionToolbar(ActionPlaces.UNKNOWN, actions, true);
         return toolbar.getComponent();
@@ -188,7 +185,7 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
 
                     try {
                         // Comparing
-                        ApplicationManager.getApplication().runProcessWithProgressSynchronously(
+                       ProgressManager.getInstance().runProcessWithProgressSynchronously(
                             new Runnable() {
                                 public void run() {
                                     ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();

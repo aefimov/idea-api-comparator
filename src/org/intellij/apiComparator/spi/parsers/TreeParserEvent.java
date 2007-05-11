@@ -13,7 +13,7 @@ public class TreeParserEvent extends EventObject {
      */
     private TreeParser parser;
 
-    TreeParserEvent(TreeParser parser, Object source) {
+    public TreeParserEvent(TreeParser parser, Object source) {
         super(source);
         this.parser = parser;
     }
