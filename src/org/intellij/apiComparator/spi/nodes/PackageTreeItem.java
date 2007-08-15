@@ -4,8 +4,8 @@ import org.intellij.apiComparator.spi.markup.TreeItemType;
 
 /**
  * <p>Package tree item
- * 
- * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
+ *
+ * @author Alexey Efimov
  */
 public class PackageTreeItem extends TreeItem {
     public static final String REGEX_POINT = "\\.";
@@ -15,7 +15,7 @@ public class PackageTreeItem extends TreeItem {
         setType(TreeItemType.PACKAGE);
     }
 
-    private static final String getName(String fullName) {
+    private static String getName(String fullName) {
         String[] names = fullName.split(REGEX_POINT);
         return names[names.length - 1];
     }

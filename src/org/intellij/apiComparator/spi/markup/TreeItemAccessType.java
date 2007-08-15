@@ -1,36 +1,40 @@
 /* $Id$ */
 package org.intellij.apiComparator.spi.markup;
 
-import org.phantom.lang.Enum;
-import org.phantom.swing.IconLoader;
+import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
+import java.text.MessageFormat;
 
 /**
  * Access icons.
  *
- * @author <a href="mailto:aefimov@tengry.com">Alexey Efimov</a>
- * @version $Revision$
+ * @author Alexey Efimov
  */
-public class TreeItemAccessType extends Enum {
-    public static final TreeItemAccessType PUBLIC = new TreeItemAccessType(0, "/nodes/c_public.png");
-    public static final TreeItemAccessType PROTECTED = new TreeItemAccessType(1, "/nodes/c_protected.png");
-    public static final TreeItemAccessType PRIVATE = new TreeItemAccessType(2, "/nodes/c_private.png");
-    public static final TreeItemAccessType PLOCAL = new TreeItemAccessType(3, "/nodes/c_plocal.png");
+public enum TreeItemAccessType {
+    PUBLIC("/nodes/c_public.png"),
+    PROTECTED("/nodes/c_protected.png"),
+    PRIVATE("/nodes/c_private.png"),
+    PLOCAL("/nodes/c_plocal.png");
 
-    private Icon icon;
+    private final Icon icon;
 
-    private TreeItemAccessType(int value, String icon) {
-        this(value, IconLoader.getIcon(icon));
+    public static TreeItemAccessType valueOf(int value) {
+        for (TreeItemAccessType constant : TreeItemAccessType.values()) {
+            if (constant.ordinal() == value) {
+                return constant;
+            }
+        }
+        throw new IllegalArgumentException(MessageFormat.format("can''t get enum for value {0}", value));
     }
 
-    private TreeItemAccessType(int value, Icon icon) {
-        super(new Integer(value));
+    private TreeItemAccessType(@NonNls String icon) {
+        this(IconLoader.getIcon(icon));
+    }
+
+    private TreeItemAccessType(Icon icon) {
         this.icon = icon;
-    }
-
-    public static TreeItemAccessType parseInt(int value) {
-        return (TreeItemAccessType)findValue(TreeItemAccessType.class, new Integer(value));
     }
 
     public Icon getIcon() {

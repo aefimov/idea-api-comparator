@@ -16,7 +16,7 @@ public class JavaClassTreeItem extends AbstractAsmTreeItem {
     private String[] packages;
 
     /**
-     * @param fqcn the fully qualified class name, java source style (ex : "org.intellij.apiComparator.spi.nodes.asm.JavaClassTreeItem")
+     * @param fqcn  the fully qualified class name, java source style (ex : "org.intellij.apiComparator.spi.nodes.asm.JavaClassTreeItem")
      * @param flags the access flags
      */
     public JavaClassTreeItem(String fqcn, int flags) {
@@ -35,7 +35,6 @@ public class JavaClassTreeItem extends AbstractAsmTreeItem {
      * returns the package of this class
      *
      * @param fqcn the fully qualified class name
-     *
      * @return the full package name
      */
     private String getPackageName(String fqcn) {
@@ -44,7 +43,6 @@ public class JavaClassTreeItem extends AbstractAsmTreeItem {
 
     /**
      * @param fqcn the fully qualified class name
-     *
      * @return the short name of this class (without the package
      */
     private static String getName(String fqcn) {

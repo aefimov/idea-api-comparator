@@ -19,14 +19,13 @@ public class FieldTreeItem extends AbstractAsmTreeItem {
     }
 
     /**
-     * @param fieldName the name of this field
+     * @param fieldName      the name of this field
      * @param typeDescriptor asm TypeDescriptor for this field {@link Type#getType(String)}
-     * @param value constant value for this field if any
-     *
+     * @param value          constant value for this field if any
      * @return a string of the form name : type (=VALUE)
      */
     private static String getDisplayName(
-        @NotNull String fieldName, @NotNull String typeDescriptor, @Nullable Object value
+            @NotNull String fieldName, @NotNull String typeDescriptor, @Nullable Object value
     ) {
         StringBuffer buffer = new StringBuffer();
 
@@ -43,9 +42,8 @@ public class FieldTreeItem extends AbstractAsmTreeItem {
     }
 
     /**
-     * @param name the field's name
+     * @param name                the field's name
      * @param fieldTypeDescriptor the field's typeDescriptor  {@link Type#getType(String)}
-     *
      * @return whether the field is scrambled
      */
     private static boolean isScrambled(String name, String fieldTypeDescriptor) {

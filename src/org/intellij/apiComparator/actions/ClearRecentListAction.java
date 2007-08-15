@@ -2,14 +2,14 @@ package org.intellij.apiComparator.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.util.IconLoader;
 import org.intellij.apiComparator.ComparatorConfiguration;
-import org.intellij.apiComparator.Plugin;
-import org.phantom.swing.IconLoader;
+import org.intellij.apiComparator.util.APIComparatorBundle;
 
 /**
  * Clear recent list
- * 
- * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
+ *
+ * @author Alexey Efimov
  */
 public class ClearRecentListAction extends AnAction {
     /**
@@ -19,9 +19,9 @@ public class ClearRecentListAction extends AnAction {
 
     public ClearRecentListAction() {
         super(
-            Plugin.localizer.getString("comparator.toolbar.actions.clearrecentlist.text"),
-            Plugin.localizer.getString("comparator.toolbar.actions.clearrecentlist.description"),
-            IconLoader.getIcon("/actions/reset.png")
+                APIComparatorBundle.message("comparator.toolbar.actions.clearrecentlist.text"),
+                APIComparatorBundle.message("comparator.toolbar.actions.clearrecentlist.description"),
+                IconLoader.getIcon("/actions/reset.png")
         );
     }
 

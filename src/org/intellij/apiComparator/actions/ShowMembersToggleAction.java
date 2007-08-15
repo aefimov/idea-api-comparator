@@ -2,20 +2,20 @@ package org.intellij.apiComparator.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
+import com.intellij.openapi.util.IconLoader;
 import org.intellij.apiComparator.ComparatorConfiguration;
-import org.intellij.apiComparator.Plugin;
 import org.intellij.apiComparator.spi.markup.TreeItemType;
 import org.intellij.apiComparator.spi.nodes.TreeItem;
 import org.intellij.apiComparator.spi.nodes.TreeItemFilter;
 import org.intellij.apiComparator.tree.TreeItemModel;
-import org.phantom.swing.IconLoader;
+import org.intellij.apiComparator.util.APIComparatorBundle;
 
 import javax.swing.*;
 
 /**
  * Changes only/Full tree
- * 
- * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
+ *
+ * @author Alexey Efimov
  */
 public class ShowMembersToggleAction extends ToggleAction {
     /**
@@ -40,15 +40,15 @@ public class ShowMembersToggleAction extends ToggleAction {
 
     public ShowMembersToggleAction(JTree tree) {
         super(
-            Plugin.localizer.getString("comparator.toolbar.actions.showmembers.text"),
-            Plugin.localizer.getString("comparator.toolbar.actions.showmembers.description"),
-            IconLoader.getIcon("/objectBrowser/showMembers.png")
+                APIComparatorBundle.message("comparator.toolbar.actions.showmembers.text"),
+                APIComparatorBundle.message("comparator.toolbar.actions.showmembers.description"),
+                IconLoader.getIcon("/objectBrowser/showMembers.png")
         );
 
         this.tree = tree;
 
         if (!configuration.isShowMembers()) {
-            ((TreeItemModel)tree.getModel()).addFilter(filter);
+            ((TreeItemModel) tree.getModel()).addFilter(filter);
         }
     }
 
@@ -59,9 +59,9 @@ public class ShowMembersToggleAction extends ToggleAction {
     public void setSelected(AnActionEvent e, boolean state) {
         configuration.setShowMembers(state);
         if (state) {
-            ((TreeItemModel)tree.getModel()).removeFilter(filter);
+            ((TreeItemModel) tree.getModel()).removeFilter(filter);
         } else {
-            ((TreeItemModel)tree.getModel()).addFilter(filter);
+            ((TreeItemModel) tree.getModel()).addFilter(filter);
         }
         tree.updateUI();
     }

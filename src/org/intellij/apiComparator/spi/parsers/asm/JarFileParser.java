@@ -5,6 +5,7 @@ import org.intellij.apiComparator.spi.nodes.TreeItem;
 import org.intellij.apiComparator.spi.nodes.TreeItemAttributes;
 import org.intellij.apiComparator.spi.nodes.asm.JavaClassTreeItem;
 import org.intellij.apiComparator.spi.parsers.AbstractTreeParser;
+import org.jetbrains.annotations.NonNls;
 import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ class JarFileParser extends AbstractTreeParser {
     /**
      * Class file extension
      */
+    @NonNls
     private static final String CLASS_EXT = ".class";
 
     /**
@@ -35,18 +37,18 @@ class JarFileParser extends AbstractTreeParser {
 
     public JarFileParser(JarFile jarFile) {
         super(jarFile);
-        setSourceSize(((JarFile)source).size());
+        setSourceSize(((JarFile) source).size());
     }
 
     protected void performParse() {
 
         TreeParserManager parserManager = TreeParserManager.getInstance();
-        TreeItem root = new TreeItem(((JarFile)source).getName());
+        TreeItem root = new TreeItem(((JarFile) source).getName());
         root.setType(TreeItemType.ARCHIVE);
         setCurrentItem(root);
 
         try {
-            Enumeration<JarEntry> enumeration = ((JarFile)source).entries();
+            Enumeration<JarEntry> enumeration = ((JarFile) source).entries();
 
             while (enumeration.hasMoreElements()) {
 
@@ -55,7 +57,7 @@ class JarFileParser extends AbstractTreeParser {
 
                 if (entryName.endsWith(CLASS_EXT)) {
 
-                    InputStream inputStream = ((JarFile)source).getInputStream(jarEntry);
+                    InputStream inputStream = ((JarFile) source).getInputStream(jarEntry);
                     try {
                         ClassReader classReader = new ClassReader(inputStream);
 
@@ -82,7 +84,7 @@ class JarFileParser extends AbstractTreeParser {
             throw new RuntimeException(e);
         } finally {
             try {
-                ((JarFile)source).close();
+                ((JarFile) source).close();
             } catch (IOException e) {
             }
         }
@@ -96,7 +98,7 @@ class JarFileParser extends AbstractTreeParser {
                 if (parent != null) {
                     TreeItem item = classes.get(className);
                     // Change className
-                    String innerName = className.substring(innerIndex + 1);
+                    @NonNls String innerName = className.substring(innerIndex + 1);
                     // Skip annonimous classes
                     if (!innerName.matches("^\\d+$")) {
                         item.setAttribute(TreeItemAttributes.ATTR_NAME, innerName);
@@ -115,7 +117,7 @@ class JarFileParser extends AbstractTreeParser {
     private TreeItem slideDown(TreeItem currentItem) {
         if (currentItem != null) {
             while (currentItem.getChildren().size() == 1 && !(currentItem instanceof JavaClassTreeItem)) {
-                currentItem = (TreeItem)currentItem.getChildren().get(0);
+                currentItem = (TreeItem) currentItem.getChildren().get(0);
             }
         }
         return currentItem;

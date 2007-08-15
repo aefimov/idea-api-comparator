@@ -5,7 +5,7 @@ import java.util.EventObject;
 /**
  * Events will send to {@link TreeParserListener} while parsing process.
  *
- * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
+ * @author Alexey Efimov
  */
 public class TreeParserEvent extends EventObject {
     /**
@@ -20,6 +20,8 @@ public class TreeParserEvent extends EventObject {
 
     /**
      * Return parser sended this event
+     *
+     * @return Tree parser
      */
     public TreeParser getParser() {
         return parser;
