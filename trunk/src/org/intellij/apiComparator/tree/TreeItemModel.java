@@ -15,8 +15,8 @@ import java.util.List;
 
 /**
  * Tree model for {@link TreeItem}
- * 
- * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
+ *
+ * @author Alexey Efimov
  */
 public class TreeItemModel implements TreeModel {
     /**
@@ -51,8 +51,8 @@ public class TreeItemModel implements TreeModel {
      */
     private static final Comparator treeComparator = new Comparator() {
         public int compare(Object o1, Object o2) {
-            TreeItem t1 = (TreeItem)o1;
-            TreeItem t2 = (TreeItem)o2;
+            TreeItem t1 = (TreeItem) o1;
+            TreeItem t2 = (TreeItem) o2;
             if (t1 == null && t2 != null) {
                 return 1;
             }
@@ -72,8 +72,8 @@ public class TreeItemModel implements TreeModel {
                 }
             }
 
-            String name1 = (String)t1.getAttributeValue(TreeItemAttributes.ATTR_NAME);
-            String name2 = (String)t2.getAttributeValue(TreeItemAttributes.ATTR_NAME);
+            String name1 = (String) t1.getAttributeValue(TreeItemAttributes.ATTR_NAME);
+            String name2 = (String) t2.getAttributeValue(TreeItemAttributes.ATTR_NAME);
             return name1 != null && name2 != null ? name1.compareTo(name2) : 0;
         }
 
@@ -88,9 +88,9 @@ public class TreeItemModel implements TreeModel {
 
     public int getChildCount(Object parent) {
         if (filters.size() > 0) {
-            return ((TreeItem)parent).getFilteredChildren().size();
+            return ((TreeItem) parent).getFilteredChildren().size();
         } else {
-            return ((TreeItem)parent).getChildren().size();
+            return ((TreeItem) parent).getChildren().size();
         }
     }
 
@@ -110,23 +110,23 @@ public class TreeItemModel implements TreeModel {
 
     public Object getChild(Object parent, int index) {
         if (filters.size() > 0) {
-            return (TreeItem)((TreeItem)parent).getFilteredChildren().get(index);
+            return (TreeItem) ((TreeItem) parent).getFilteredChildren().get(index);
         } else {
-            return (TreeItem)((TreeItem)parent).getChildren().get(index);
+            return (TreeItem) ((TreeItem) parent).getChildren().get(index);
         }
     }
 
     public int getIndexOfChild(Object parent, Object child) {
         if (filters.size() > 0) {
-            return ((TreeItem)parent).getFilteredChildren().indexOf(child);
+            return ((TreeItem) parent).getFilteredChildren().indexOf(child);
         } else {
-            return ((TreeItem)parent).getChildren().indexOf(child);
+            return ((TreeItem) parent).getChildren().indexOf(child);
         }
     }
 
     public void valueForPathChanged(TreePath path, Object newValue) {
-        for (int i = 0; i < listeners.size(); i++) {
-            TreeModelListener listener = (TreeModelListener)listeners.get(i);
+        for (Object listener1 : listeners) {
+            TreeModelListener listener = (TreeModelListener) listener1;
             TreeModelEvent event = new TreeModelEvent(newValue, path);
             listener.treeNodesChanged(event);
         }
@@ -151,8 +151,8 @@ public class TreeItemModel implements TreeModel {
             List children = item.getChildren();
             List filteredChildren = item.getFilteredChildren();
             filteredChildren.clear();
-            for (int i = 0; i < children.size(); i++) {
-                TreeItem child = (TreeItem)children.get(i);
+            for (Object aChildren : children) {
+                TreeItem child = (TreeItem) aChildren;
                 if (isFiltersAccept(child)) {
                     filteredChildren.add(child);
                     rebuildFilteredChildren(child);
@@ -165,8 +165,8 @@ public class TreeItemModel implements TreeModel {
      * Return true if one or more filters accept {@link TreeItem}.
      */
     private boolean isFiltersAccept(TreeItem item) {
-        for (int i = 0; i < filters.size(); i++) {
-            TreeItemFilter filter = (TreeItemFilter)filters.get(i);
+        for (Object filter1 : filters) {
+            TreeItemFilter filter = (TreeItemFilter) filter1;
             if (!filter.accept(item)) {
                 return false;
             }

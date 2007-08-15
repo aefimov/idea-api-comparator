@@ -4,8 +4,7 @@ package org.intellij.apiComparator.spi.nodes;
 /**
  * Utility for checking obfuscated code.
  *
- * @author <a href="mailto:aefimov@tengry.com">Alexey Efimov</a>
- * @version $Revision$
+ * @author Alexey Efimov
  */
 public class ObfuscatorUtil {
     public static boolean isScrambled(String name) {

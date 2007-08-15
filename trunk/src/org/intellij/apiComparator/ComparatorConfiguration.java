@@ -12,8 +12,8 @@ import java.util.List;
 
 /**
  * Comparator configuration
- * 
- * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
+ *
+ * @author Alexey Efimov
  */
 public class ComparatorConfiguration implements ApplicationComponent, JDOMExternalizable {
     /**
@@ -96,7 +96,7 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
             }
             List entries = recentElement.getChildren(JDOM_NODE_RECENT_ENTRY);
             for (int i = 0; i < entries.size(); i++) {
-                Element entry = (Element)entries.get(i);
+                Element entry = (Element) entries.get(i);
                 String path = entry.getAttributeValue(JDOM_ATTR_RECENT_ENTRY_PATH);
                 if (comparator.isValidPath(path) && !recentEntries.contains(path)) {
                     recentEntries.add(path);
@@ -121,7 +121,7 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
         // Write all recent files
         for (int i = 0; i < recentEntries.size(); i++) {
             Element entryElement = new Element(JDOM_NODE_RECENT_ENTRY);
-            entryElement.setAttribute(JDOM_ATTR_RECENT_ENTRY_PATH, (String)recentEntries.get(i));
+            entryElement.setAttribute(JDOM_ATTR_RECENT_ENTRY_PATH, (String) recentEntries.get(i));
 
             recentElement.addContent(entryElement);
         }
@@ -130,8 +130,8 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
     }
 
     public static final ComparatorConfiguration getInstance() {
-        return (ComparatorConfiguration)ApplicationManager.getApplication().getComponent(
-            ComparatorConfiguration.class
+        return (ComparatorConfiguration) ApplicationManager.getApplication().getComponent(
+                ComparatorConfiguration.class
         );
     }
 
@@ -176,7 +176,7 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
     }
 
     public String[] getRecentEntries() {
-        return (String[])recentEntries.toArray(new String[]{});
+        return (String[]) recentEntries.toArray(new String[]{});
     }
 
     public void addRecentEntry(String path) {
@@ -222,7 +222,7 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
 
     private void fireRecentListChanged() {
         for (int i = 0; i < listeners.size(); i++) {
-            ComparatorConfigurationListener listener = (ComparatorConfigurationListener)listeners.get(i);
+            ComparatorConfigurationListener listener = (ComparatorConfigurationListener) listeners.get(i);
             listener.recentListChanged();
         }
     }

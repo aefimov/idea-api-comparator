@@ -26,6 +26,6 @@ public abstract class AbstractAsmTreeItem extends ScrambleableTreeItem {
     }
 
     public String toString() {
-        return (String)getAttributeValue(TreeItemAttributes.ATTR_TEXT);
+        return (String) getAttributeValue(TreeItemAttributes.ATTR_TEXT);
     }
 }

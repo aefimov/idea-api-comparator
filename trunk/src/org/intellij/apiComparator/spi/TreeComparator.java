@@ -7,8 +7,8 @@ import java.util.List;
 
 /**
  * Default Tree Comparator.
- * 
- * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
+ *
+ * @author Alexey Efimov
  */
 public class TreeComparator {
     /**
@@ -19,7 +19,6 @@ public class TreeComparator {
      *
      * @param source Source root tree item
      * @param target Target root tree item
-     *
      * @return Comparison result merged tree
      */
     public static TreeItem compare(TreeItem source, TreeItem target) {
@@ -33,12 +32,12 @@ public class TreeComparator {
         List targetChildren = target.getChildren();
         // Search by source items
         List sourceChildren = source.getChildren();
-        for (int i = 0; i < sourceChildren.size(); i++) {
-            TreeItem sourceItem = (TreeItem)sourceChildren.get(i);
+        for (Object aSourceChildren : sourceChildren) {
+            TreeItem sourceItem = (TreeItem) aSourceChildren;
             TreeItem targetItem = null;
             boolean isMatched = false;
             for (int j = 0; j < targetChildren.size() && !isMatched; j++) {
-                targetItem = (TreeItem)targetChildren.get(j);
+                targetItem = (TreeItem) targetChildren.get(j);
                 isMatched = sourceItem.matched(targetItem);
                 if (isMatched) {
                     // Add mathed comparing tree
@@ -57,8 +56,8 @@ public class TreeComparator {
             }
         }
         // Now add all not mathed items source comparable list
-        for (int i = 0; i < targetChildren.size(); i++) {
-            TreeItem targetItem = (TreeItem)targetChildren.get(i);
+        for (Object aTargetChildren : targetChildren) {
+            TreeItem targetItem = (TreeItem) aTargetChildren;
             // Create the 'add' marked item
             targetItem.setMarker(TreeItemMarker.ADDED);
             source.addChild(targetItem);
@@ -71,8 +70,8 @@ public class TreeComparator {
 
     private static void markupDown(TreeItem item) {
         List children = item.getChildren();
-        for (int i = 0; i < children.size(); i++) {
-            TreeItem child = (TreeItem)children.get(i);
+        for (Object aChildren : children) {
+            TreeItem child = (TreeItem) aChildren;
             child.setMarker(item.getMarker());
 
             // Mark recursive

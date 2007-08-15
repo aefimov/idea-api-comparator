@@ -8,7 +8,7 @@ import java.util.jar.JarFile;
 /**
  * Manager for tree parsers.
  *
- * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
+ * @author Alexey Efimov
  */
 public class TreeParserManager {
     /**
