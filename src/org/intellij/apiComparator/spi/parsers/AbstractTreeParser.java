@@ -7,8 +7,8 @@ import java.util.List;
 
 /**
  * Default parse progress monitor implementation.
- *
- * @author Alexey Efimov
+ * 
+ * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
  */
 public abstract class AbstractTreeParser implements TreeParser, Runnable {
     /**
@@ -112,8 +112,8 @@ public abstract class AbstractTreeParser implements TreeParser, Runnable {
         if (source != null) {
             started = true;
             TreeParserEvent event = new TreeParserEvent(this, source);
-            for (Object listener1 : listeners) {
-                TreeParserListener listener = (TreeParserListener) listener1;
+            for (int i = 0; i < listeners.size(); i++) {
+                TreeParserListener listener = (TreeParserListener)listeners.get(i);
                 listener.start(event);
             }
         } else {
@@ -126,8 +126,8 @@ public abstract class AbstractTreeParser implements TreeParser, Runnable {
      */
     protected void fireNextEvent() {
         TreeParserEvent event = new TreeParserEvent(this, currentItem);
-        for (Object listener1 : listeners) {
-            TreeParserListener listener = (TreeParserListener) listener1;
+        for (int i = 0; i < listeners.size(); i++) {
+            TreeParserListener listener = (TreeParserListener)listeners.get(i);
             listener.next(event);
         }
     }
@@ -139,8 +139,8 @@ public abstract class AbstractTreeParser implements TreeParser, Runnable {
         completed = true;
         if (result != null) {
             TreeParserEvent event = new TreeParserEvent(this, result);
-            for (Object listener1 : listeners) {
-                TreeParserListener listener = (TreeParserListener) listener1;
+            for (int i = 0; i < listeners.size(); i++) {
+                TreeParserListener listener = (TreeParserListener)listeners.get(i);
                 listener.complete(event);
             }
         }

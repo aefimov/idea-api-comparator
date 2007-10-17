@@ -8,11 +8,8 @@ import org.intellij.apiComparator.spi.nodes.asm.FieldTreeItem;
 import org.intellij.apiComparator.spi.nodes.asm.JavaClassTreeItem;
 import org.intellij.apiComparator.spi.nodes.asm.MethodTreeItem;
 import org.intellij.apiComparator.spi.parsers.AbstractTreeParser;
-import org.jetbrains.annotations.NonNls;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.EmptyVisitor;
-
-import java.text.MessageFormat;
 
 /**
  * The parser for java class. Uses the {@link ClassVisitor ASM class visitor} to visit each part of the class. Note :
@@ -21,10 +18,7 @@ import java.text.MessageFormat;
  * @author <a href="mailto:thibaut.fagart@gmail.com">Thibaut Fagart</a>
  */
 public class JavaClassParser extends AbstractTreeParser implements ClassVisitor {
-    @NonNls
-    private static final String L_0 = "L{0};";
-    private static final EmptyVisitor EMPTY_VISITOR = new EmptyVisitor();
-
+    private final static EmptyVisitor EMPTY_VISITOR = new EmptyVisitor();
     TreeItem cursor = null;
     boolean isScrambled = false;
 
@@ -36,14 +30,14 @@ public class JavaClassParser extends AbstractTreeParser implements ClassVisitor 
     }
 
     protected void performParse() {
-        ((ClassReader) source).accept(this, false);
+        ((ClassReader)source).accept(this, false);
     }
 
     public void visit(
-            int version, int access, String classNameJVMStyle, String signature, String superName, String[] interfaces
+        int version, int access, String classNameJVMStyle, String signature, String superName, String[] interfaces
     ) {
 
-        String fqcn = Type.getType(MessageFormat.format(L_0, classNameJVMStyle)).getClassName();
+        String fqcn = Type.getType("L" + classNameJVMStyle + ";").getClassName();
         isScrambled = ObfuscatorUtil.isScrambled(fqcn);
         if (!isScrambled) {
             JavaClassTreeItem classItem = new JavaClassTreeItem(fqcn, access);

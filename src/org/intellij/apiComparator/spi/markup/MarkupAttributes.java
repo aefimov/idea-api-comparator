@@ -6,7 +6,8 @@ import java.awt.*;
 /**
  * Attributes for painting tree.
  *
- * @author Alexey Efimov
+ * @author <a href="mailto:aefimov@tengry.com">Alexey Efimov</a>
+ * @version $Revision$
  */
 public class MarkupAttributes {
     private Color foreground;

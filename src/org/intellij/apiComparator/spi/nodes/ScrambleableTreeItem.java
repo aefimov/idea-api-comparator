@@ -2,7 +2,8 @@
 package org.intellij.apiComparator.spi.nodes;
 
 /**
- * @author Alexey Efimov
+ * @author <a href="mailto:aefimov@tengry.com">Alexey Efimov</a>
+ * @version $Revision$
  */
 public class ScrambleableTreeItem extends TreeItem {
     private boolean scrambled;

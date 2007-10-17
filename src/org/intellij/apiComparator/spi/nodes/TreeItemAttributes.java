@@ -1,24 +1,15 @@
 /* $Id$ */
 package org.intellij.apiComparator.spi.nodes;
 
-import org.jetbrains.annotations.NonNls;
-
 /**
  * Common attributes.
- *
- * @author Alexey Efimov
+ * @author <a href="mailto:aefimov@tengry.com">Alexey Efimov</a>
+ * @version $Revision$
  */
 public interface TreeItemAttributes {
-    @NonNls
     String ATTR_VALUE = "value";
-    /**
-     * Name attribute
-     */
-    @NonNls
+    /** Name attribute */
     String ATTR_NAME = "name";
-    /**
-     * Text attribute
-     */
-    @NonNls
+    /** Text attribute */
     String ATTR_TEXT = "text";
 }

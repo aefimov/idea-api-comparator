@@ -9,8 +9,8 @@ import java.awt.*;
 
 /**
  * Renderer for {@link JTree}
- *
- * @author Alexey Efimov
+ * 
+ * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
  */
 public class TreeItemRenderer extends DefaultTreeCellRenderer {
     /**
@@ -41,15 +41,15 @@ public class TreeItemRenderer extends DefaultTreeCellRenderer {
     }
 
     public Component getTreeCellRendererComponent(
-            JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus
-    ) {
+        JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus
+        ) {
         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
         this.accessIcon = null;
         setIconTextGap(defaultIconGap);
 
         if (value instanceof TreeItem) {
-            TreeItem item = (TreeItem) value;
+            TreeItem item = (TreeItem)value;
 
             // Set up icon for node
             TreeItemType type = item.getType();

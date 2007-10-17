@@ -2,8 +2,8 @@ package org.intellij.apiComparator.spi.nodes;
 
 /**
  * Filter for tree model
- *
- * @author Alexey Efimov
+ * 
+ * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
  */
 public interface TreeItemFilter {
     /**

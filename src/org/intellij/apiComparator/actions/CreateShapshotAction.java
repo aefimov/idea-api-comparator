@@ -4,6 +4,7 @@ package org.intellij.apiComparator.actions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -11,7 +12,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
@@ -19,9 +19,9 @@ import org.intellij.apiComparator.FileTypeFilter;
 import org.intellij.apiComparator.Plugin;
 import org.intellij.apiComparator.spi.nodes.TreeItem;
 import org.intellij.apiComparator.tree.TreeItemModel;
-import org.intellij.apiComparator.util.APIComparatorBundle;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.phantom.swing.IconLoader;
 
 import javax.swing.*;
 import java.io.File;
@@ -33,7 +33,8 @@ import java.util.zip.ZipOutputStream;
 /**
  * Create snapshot from compared tree.
  *
- * @author Alexey Efimov
+ * @author <a href="mailto:aefimov@tengry.com">Alexey Efimov</a>
+ * @version $Revision$
  */
 public class CreateShapshotAction extends AnAction {
     /**
@@ -43,9 +44,9 @@ public class CreateShapshotAction extends AnAction {
 
     public CreateShapshotAction(JTree tree) {
         super(
-                APIComparatorBundle.message("comparator.toolbar.actions.createSnapshot.text"),
-                APIComparatorBundle.message("comparator.toolbar.actions.createSnapshot.description"),
-                IconLoader.getIcon("/actions/dump.png")
+            Plugin.localizer.getString("comparator.toolbar.actions.createSnapshot.text"),
+            Plugin.localizer.getString("comparator.toolbar.actions.createSnapshot.description"),
+            IconLoader.getIcon("/actions/dump.png")
         );
         this.tree = tree;
     }
@@ -56,17 +57,17 @@ public class CreateShapshotAction extends AnAction {
             JFileChooser jfc = new JFileChooser();
             jfc.setAcceptAllFileFilterUsed(false);
             jfc.addChoosableFileFilter(
-                    new FileTypeFilter(StdFileTypes.XML)
+                new FileTypeFilter(StdFileTypes.XML, "comparator.fileChooser.snapshot.filter.xml.description")
             );
             jfc.addChoosableFileFilter(
-                    new FileTypeFilter(StdFileTypes.ARCHIVE)
+                new FileTypeFilter(StdFileTypes.ARCHIVE, "comparator.fileChooser.snapshot.filter.zip.description")
             );
-            jfc.setDialogTitle(APIComparatorBundle.message("comparator.fileChooser.snapshot.save.title"));
+            jfc.setDialogTitle(Plugin.localizer.getString("comparator.fileChooser.snapshot.save.title"));
             jfc.setDialogType(JFileChooser.SAVE_DIALOG);
 
             if (jfc.showSaveDialog(tree) == JFileChooser.APPROVE_OPTION) {
                 File file = jfc.getSelectedFile();
-                final FileType fileType = ((FileTypeFilter) jfc.getFileFilter()).getFileType();
+                final FileType fileType = ((FileTypeFilter)jfc.getFileFilter()).getFileType();
                 if (file != null) {
                     if (!file.exists()) {
                         String fileName = file.getName();
@@ -81,20 +82,20 @@ public class CreateShapshotAction extends AnAction {
                     }
                     if (file.isDirectory() || (file.exists() && !file.canWrite())) {
                         Messages.showWarningDialog(
-                                APIComparatorBundle.message(
-                                        "comparator.fileChooser.snapshot.save.warning.message", file.getPath()
-                                ),
-                                APIComparatorBundle.message("comparator.fileChooser.snapshot.save.title")
+                            Plugin.localizer.format(
+                                "comparator.fileChooser.snapshot.save.warning.message", file.getPath()
+                            ),
+                            Plugin.localizer.getString("comparator.fileChooser.snapshot.save.title")
                         );
                     } else {
                         boolean canWrite = file.createNewFile();
                         if (!canWrite) {
                             canWrite = Messages.showYesNoDialog(
-                                    APIComparatorBundle.message(
-                                            "comparator.fileChooser.snapshot.save.fileexists.message", file.getPath()
-                                    ),
-                                    APIComparatorBundle.message("comparator.fileChooser.snapshot.save.title"),
-                                    Messages.getQuestionIcon()
+                                Plugin.localizer.format(
+                                    "comparator.fileChooser.snapshot.save.fileexists.message", file.getPath()
+                                ),
+                                Plugin.localizer.getString("comparator.fileChooser.snapshot.save.title"),
+                                Messages.getQuestionIcon()
                             ) == 0;
                             if (canWrite) {
                                 // Clean up it
@@ -105,64 +106,64 @@ public class CreateShapshotAction extends AnAction {
                             // Write file
                             final File snapshotFile = file;
                             ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                                    new Runnable() {
-                                        public void run() {
+                                new Runnable() {
+                                    public void run() {
+                                        try {
+                                            OutputStream outputStream = new FileOutputStream(snapshotFile);
                                             try {
-                                                OutputStream outputStream = new FileOutputStream(snapshotFile);
-                                                try {
-                                                    ProgressManager progressManager = ProgressManager.getInstance();
-                                                    ProgressIndicator indicator = progressManager.getProgressIndicator();
+                                                ProgressManager progressManager = ProgressManager.getInstance();
+                                                ProgressIndicator indicator = progressManager.getProgressIndicator();
 
-                                                    if (fileType.equals(StdFileTypes.ARCHIVE)) {
-                                                        outputStream = new ZipOutputStream(outputStream);
-                                                        ((ZipOutputStream) outputStream).putNextEntry(
-                                                                new ZipEntry("snapshot.xml")
-                                                        );
-                                                    }
-                                                    TreeItemModel model = (TreeItemModel) tree.getModel();
-                                                    TreeItem item = (TreeItem) model.getRoot();
-                                                    Element element = TreeItem.createElement();
-                                                    indicator.setText(
-                                                            APIComparatorBundle.message(
-                                                                    "comparator.createsnapshot.progress.preparing"
-                                                            )
+                                                if (fileType.equals(StdFileTypes.ARCHIVE)) {
+                                                    outputStream = new ZipOutputStream(outputStream);
+                                                    ((ZipOutputStream)outputStream).putNextEntry(
+                                                        new ZipEntry("snapshot.xml")
                                                     );
-                                                    // Write to JDOM
-                                                    item.writeExternal(element);
-                                                    if (indicator.isCanceled()) {
-                                                        throw new ProcessCanceledException();
-                                                    }
-
-                                                    indicator.setText(
-                                                            APIComparatorBundle.message(
-                                                                    "comparator.createsnapshot.progress.saving",
-                                                                    new Object[]{snapshotFile.getPath()}
-                                                            )
-                                                    );
-                                                    // Write to file
-                                                    JDOMUtil.writeDocument(new Document(element), outputStream, "\n");
-                                                } finally {
-                                                    outputStream.close();
                                                 }
-                                            } catch (Exception e) {
-                                                Plugin.LOG.error(e);
-                                                throw new ProcessCanceledException();
+                                                TreeItemModel model = (TreeItemModel)tree.getModel();
+                                                TreeItem item = (TreeItem)model.getRoot();
+                                                Element element = TreeItem.createElement();
+                                                indicator.setText(
+                                                    Plugin.localizer.getString(
+                                                        "comparator.createsnapshot.progress.preparing"
+                                                    )
+                                                );
+                                                // Write to JDOM
+                                                item.writeExternal(element);
+                                                if (indicator.isCanceled()) {
+                                                    throw new ProcessCanceledException();
+                                                }
+
+                                                indicator.setText(
+                                                    Plugin.localizer.format(
+                                                        "comparator.createsnapshot.progress.saving",
+                                                        new Object[]{snapshotFile.getPath()}
+                                                    )
+                                                );
+                                                // Write to file
+                                                JDOMUtil.writeDocument(new Document(element), outputStream, "\n");
+                                            } finally {
+                                                outputStream.close();
                                             }
+                                        } catch (Exception e) {
+                                            Plugin.logger.error(e);
+                                            throw new ProcessCanceledException();
                                         }
-                                    },
-                                    APIComparatorBundle.message("comparator.createsnapshot.progress.title"),
-                                    true,
-                                    (Project) e.getDataContext().getData(DataConstants.PROJECT)
+                                    }
+                                },
+                                Plugin.localizer.getString("comparator.createsnapshot.progress.title"),
+                                true,
+                                (Project)e.getDataContext().getData(DataConstants.PROJECT)
                             );
                             // Notification in status bar
                             WindowManager windowManager = WindowManager.getInstance();
-                            Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
+                            Project project = (Project)e.getDataContext().getData(DataConstants.PROJECT);
                             if (project != null) {
                                 StatusBar statusBar = windowManager.getStatusBar(project);
                                 statusBar.setInfo(
-                                        APIComparatorBundle.message(
-                                                "comparator.fileChooser.snapshot.save.success.message", file.getPath()
-                                        )
+                                    Plugin.localizer.format(
+                                        "comparator.fileChooser.snapshot.save.success.message", file.getPath()
+                                    )
                                 );
                             }
 
@@ -171,14 +172,14 @@ public class CreateShapshotAction extends AnAction {
                 }
             }
         } catch (Exception ex) {
-            Plugin.LOG.error(ex);
+            Plugin.logger.error(ex);
         }
 
     }
 
     public void update(AnActionEvent event) {
-        TreeItemModel model = (TreeItemModel) tree.getModel();
-        TreeItem item = (TreeItem) model.getRoot();
+        TreeItemModel model = (TreeItemModel)tree.getModel();
+        TreeItem item = (TreeItem)model.getRoot();
         event.getPresentation().setEnabled(item != null);
     }
 }

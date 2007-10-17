@@ -1,16 +1,17 @@
+/* $Id$ */
 package org.intellij.apiComparator;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import org.intellij.apiComparator.util.APIComparatorBundle;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * Filter for JFileChooser.
  *
- * @author Alexey Efimov
+ * @author <a href="mailto:aefimov@tengry.com">Alexey Efimov</a>
  */
 public class FileTypeFilter extends FileFilter {
     /**
@@ -29,13 +30,17 @@ public class FileTypeFilter extends FileFilter {
     }
 
     public boolean accept(File f) {
-        if (fileType != null) {
-            if (f.isDirectory()) {
-                return true;
-            }
+        if (f.isDirectory()) {
+            return true;
+        }
 
-            FileTypeManager typeManager = FileTypeManager.getInstance();
-            return fileType.equals(typeManager.getFileTypeByFileName(f.getName()));
+        // Check for extension
+        String fileName = f.getName();
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
+            String extension = fileName.substring(dotIndex + 1);
+
+            return Arrays.asList(FileTypeManager.getInstance().getAssociatedExtensions(fileType)).contains(extension);
         }
         return false;
     }
@@ -45,6 +50,6 @@ public class FileTypeFilter extends FileFilter {
     }
 
     public String getDescription() {
-        return APIComparatorBundle.message(descriptionKey, fileType.getDefaultExtension());
+        return Plugin.localizer.format(descriptionKey, fileType.getDefaultExtension());
     }
 }

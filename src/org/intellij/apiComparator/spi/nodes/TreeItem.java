@@ -1,33 +1,23 @@
 package org.intellij.apiComparator.spi.nodes;
 
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.util.InvalidDataException;
-import org.intellij.apiComparator.Plugin;
+import com.intellij.openapi.util.JDOMExternalizable;
+import com.intellij.openapi.util.WriteExternalException;
 import org.intellij.apiComparator.spi.markup.TreeItemAccessType;
 import org.intellij.apiComparator.spi.markup.TreeItemMarker;
 import org.intellij.apiComparator.spi.markup.TreeItemType;
 import org.jdom.Attribute;
 import org.jdom.DataConversionException;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 
 import java.util.*;
 
 /**
  * Default Tree Item implementation.
- *
- * @author Alexey Efimov
+ * 
+ * @author <a href="mailto:aefimov@tengry.com">Alexey Efimov</a>
  */
-public class TreeItem implements PersistentStateComponent<Element> {
-    @NonNls
-    public static final String JDOM_NODE_ITEM = "item";
-    @NonNls
-    public static final String JDOM_ATTR_MARK = "mark";
-    @NonNls
-    public static final String JDOM_ATTR_TYPE = "type";
-    @NonNls
-    public static final String JDOM_ATTR_ACCESS = "access";
-
+public class TreeItem implements JDOMExternalizable {
     /**
      * Item attributes
      */
@@ -63,6 +53,11 @@ public class TreeItem implements PersistentStateComponent<Element> {
      */
     private TreeItemAccessType accessType;
 
+    public static final String JDOM_NODE_ITEM = "item";
+    public static final String JDOM_ATTR_MARK = "mark";
+    public static final String JDOM_ATTR_TYPE = "type";
+    public static final String JDOM_ATTR_ACCESS = "access";
+
     public TreeItem getParent() {
         return parent;
     }
@@ -95,8 +90,8 @@ public class TreeItem implements PersistentStateComponent<Element> {
                 oldChild.setAccessType(child.getAccessType());
             }
             // Add all children (if not exists)
-            for (Object aChildren : children) {
-                oldChild.addChild((TreeItem) aChildren);
+            for (int i = 0; i < children.size(); i++) {
+                oldChild.addChild((TreeItem)children.get(i));
             }
         } else {
             // Item not exists
@@ -110,7 +105,7 @@ public class TreeItem implements PersistentStateComponent<Element> {
     }
 
     public TreeItem getChild(int index) {
-        return (TreeItem) children.get(index);
+        return (TreeItem)children.get(index);
     }
 
     public List getFilteredChildren() {
@@ -146,7 +141,7 @@ public class TreeItem implements PersistentStateComponent<Element> {
     }
 
     public TreeItem(Element element) throws InvalidDataException {
-        loadState(element);
+        readExternal(element);
     }
 
     public TreeItem(String value, String name) {
@@ -174,8 +169,8 @@ public class TreeItem implements PersistentStateComponent<Element> {
     }
 
     public String toString() {
-        String string = (String) getAttributeValue(TreeItemAttributes.ATTR_NAME);
-        return string != null ? string : (String) getAttributeValue(TreeItemAttributes.ATTR_VALUE);
+        String string = (String)getAttributeValue(TreeItemAttributes.ATTR_NAME);
+        return string != null ? string : (String)getAttributeValue(TreeItemAttributes.ATTR_VALUE);
     }
 
     public boolean equals(Object item) {
@@ -188,7 +183,7 @@ public class TreeItem implements PersistentStateComponent<Element> {
 
             Object value = getAttributeValue(TreeItemAttributes.ATTR_VALUE);
             return typeName.equals(item.getClass().getName()) && value != null && value.equals(
-                    ((TreeItem) item).getAttributeValue(TreeItemAttributes.ATTR_VALUE)
+                ((TreeItem)item).getAttributeValue(TreeItemAttributes.ATTR_VALUE)
             );
         }
         return false;
@@ -227,71 +222,28 @@ public class TreeItem implements PersistentStateComponent<Element> {
         this.accessType = accessType;
     }
 
-    public static Element createElement() {
-        return new Element(JDOM_NODE_ITEM);
-    }
-
-    public void sort(Comparator comparator) {
-        Collections.sort(children, comparator);
-        Collections.sort(filteredChildren, comparator);
-        for (Object aChildren : children) {
-            TreeItem item = (TreeItem) aChildren;
-            item.sort(comparator);
-        }
-    }
-
-    public Element getState() {
-        Element element = createElement();
-        // Save attributes
-        if (attributes != null) {
-            for (Object o : attributes.keySet()) {
-                String name = (String) o;
-                element.setAttribute(name, String.valueOf(attributes.get(name)));
-            }
-        }
-
-        if (type != null) {
-            element.setAttribute(JDOM_ATTR_TYPE, String.valueOf(type.ordinal()));
-        }
-        if (accessType != null) {
-            element.setAttribute(JDOM_ATTR_ACCESS, String.valueOf(accessType.ordinal()));
-        }
-        if (marker != null) {
-            element.setAttribute(JDOM_ATTR_MARK, String.valueOf(marker.ordinal()));
-        }
-
-        // Put children
-        for (Object aChildren : children) {
-            element.addContent(((TreeItem) aChildren).getState());
-        }
-        return null;
-    }
-
-    public void loadState(Element state) {
-        if (JDOM_NODE_ITEM.equals(state.getName())) {
-            List attributeList = state.getAttributes();
+    public void readExternal(Element element) throws InvalidDataException {
+        if (JDOM_NODE_ITEM.equals(element.getName())) {
+            List attributeList = element.getAttributes();
             if (attributes != null) {
                 attributes.clear();
             }
-            for (Object anAttributeList : attributeList) {
-                Attribute attribute = (Attribute) anAttributeList;
+            for (int i = 0; i < attributeList.size(); i++) {
+                Attribute attribute = (Attribute)attributeList.get(i);
                 if (JDOM_ATTR_MARK.equals(attribute.getName())) {
                     try {
-                        setMarker(TreeItemMarker.valueOf(attribute.getIntValue()));
+                        setMarker(TreeItemMarker.parseInt(attribute.getIntValue()));
                     } catch (DataConversionException e) {
-                        Plugin.LOG.error(e);
                     }
                 } else if (JDOM_ATTR_TYPE.equals(attribute.getName())) {
                     try {
-                        setType(TreeItemType.valueOf(attribute.getIntValue()));
+                        setType(TreeItemType.parseInt(attribute.getIntValue()));
                     } catch (DataConversionException e) {
-                        Plugin.LOG.error(e);
                     }
                 } else if (JDOM_ATTR_ACCESS.equals(attribute.getName())) {
                     try {
-                        setAccessType(TreeItemAccessType.valueOf(attribute.getIntValue()));
+                        setAccessType(TreeItemAccessType.parseInt(attribute.getIntValue()));
                     } catch (DataConversionException e) {
-                        Plugin.LOG.error(e);
                     }
                 } else {
                     setAttribute(attribute.getName(), attribute.getValue());
@@ -299,17 +251,54 @@ public class TreeItem implements PersistentStateComponent<Element> {
             }
 
             // Read children
-            List childList = state.getChildren(JDOM_NODE_ITEM);
+            List childList = element.getChildren(JDOM_NODE_ITEM);
             children.clear();
 
-            for (Object aChildList : childList) {
-                Element childElement = (Element) aChildList;
-                try {
-                    addChild(new TreeItem(childElement));
-                } catch (InvalidDataException e) {
-                    Plugin.LOG.error(e);
-                }
+            for (int i = 0; i < childList.size(); i++) {
+                Element childElement = (Element)childList.get(i);
+                addChild(new TreeItem(childElement));
             }
+        }
+    }
+
+    public void writeExternal(Element element) throws WriteExternalException {
+        // Save attributes
+        if (attributes != null) {
+            Iterator keys = attributes.keySet().iterator();
+            while (keys.hasNext()) {
+                String name = (String)keys.next();
+                element.setAttribute(name, String.valueOf(attributes.get(name)));
+            }
+        }
+
+        if (type != null) {
+            element.setAttribute(JDOM_ATTR_TYPE, String.valueOf(type.getValue()));
+        }
+        if (accessType != null) {
+            element.setAttribute(JDOM_ATTR_ACCESS, String.valueOf(accessType.getValue()));
+        }
+        if (marker != null) {
+            element.setAttribute(JDOM_ATTR_MARK, String.valueOf(marker.getValue()));
+        }
+
+        // Put children
+        for (int i = 0; i < children.size(); i++) {
+            Element childElement = createElement();
+            ((TreeItem)children.get(i)).writeExternal(childElement);
+            element.addContent(childElement);
+        }
+    }
+
+    public static Element createElement() {
+        return new Element(JDOM_NODE_ITEM);
+    }
+
+    public void sort(Comparator comparator) {
+        Collections.sort(children, comparator);
+        Collections.sort(filteredChildren, comparator);
+        for (int i = 0; i < children.size(); i++) {
+            TreeItem item = (TreeItem)children.get(i);
+            item.sort(comparator);
         }
     }
 }

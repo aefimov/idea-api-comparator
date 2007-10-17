@@ -1,10 +1,10 @@
 package org.intellij.apiComparator.spi.nodes.asm;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.intellij.apiComparator.spi.markup.TreeItemType;
 import org.intellij.apiComparator.spi.nodes.ObfuscatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Type;
+import org.phantom.lang.Strings;
 
 /**
  * <p>The tree item for java methods.
@@ -19,9 +19,10 @@ public class MethodTreeItem extends AbstractAsmTreeItem {
     }
 
     /**
-     * @param methodName       the name of the method
+     * @param methodName the name of the method
      * @param methodDescriptor the method descriptor {@link Type#getReturnType(String)} {@link
-     *                         Type#getArgumentTypes(String)}
+     * Type#getArgumentTypes(String)}
+     *
      * @return a string of the form: name((argType,)):returnType
      */
     private static String getDisplayName(@NotNull String methodName, @NotNull String methodDescriptor) {
@@ -30,7 +31,7 @@ public class MethodTreeItem extends AbstractAsmTreeItem {
         buffer.append(methodName);
         buffer.append('(');
         String[] argTypesStrings = getArgTypes(methodDescriptor);
-        buffer.append(StringUtil.join(argTypesStrings, ", "));
+        buffer.append(Strings.join(argTypesStrings, ", "));
         buffer.append("):");
         buffer.append(Type.getReturnType(methodDescriptor).getClassName());
         return buffer.toString();
@@ -50,8 +51,9 @@ public class MethodTreeItem extends AbstractAsmTreeItem {
     /**
      * A method is scrambled if either of it's name or all the used types (arguments or return values) is scrambled
      *
-     * @param name             the method name
+     * @param name the method name
      * @param methodDescriptor the method descriptor
+     *
      * @return whether this method is scrambled
      */
     private static boolean isScrambled(String name, String methodDescriptor) {

@@ -4,14 +4,12 @@ import org.intellij.apiComparator.spi.nodes.TreeItem;
 
 /**
  * The tree loader to load tree structure from object
- *
- * @author Alexey Efimov
+ * 
+ * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
  */
 public interface TreeParser {
     /**
      * Loading tree from source object.
-     *
-     * @return Tree
      */
     public TreeItem parse();
 
@@ -44,15 +42,11 @@ public interface TreeParser {
 
     /**
      * Add listener
-     *
-     * @param listener Listener
      */
     public void addTreeParserListener(TreeParserListener listener);
 
     /**
      * Remove listener
-     *
-     * @param listener Listener
      */
     public void removeTreeParserListener(TreeParserListener listener);
 }

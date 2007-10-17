@@ -14,7 +14,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.DimensionService;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.intellij.apiComparator.actions.*;
@@ -25,13 +24,13 @@ import org.intellij.apiComparator.spi.markup.TreeItemMarker;
 import org.intellij.apiComparator.spi.nodes.TreeItem;
 import org.intellij.apiComparator.spi.nodes.TreeItemAttributes;
 import org.intellij.apiComparator.spi.parsers.TreeParser;
-import org.intellij.apiComparator.spi.parsers.TreeParserEvent;
 import org.intellij.apiComparator.spi.parsers.TreeParserListener;
+import org.intellij.apiComparator.spi.parsers.TreeParserEvent;
 import org.intellij.apiComparator.spi.parsers.asm.TreeParserManager;
 import org.intellij.apiComparator.tree.TreeItemModel;
 import org.intellij.apiComparator.tree.TreeItemRenderer;
-import org.intellij.apiComparator.util.APIComparatorBundle;
-import org.jetbrains.annotations.NonNls;
+import org.phantom.lang.Strings;
+import org.phantom.swing.IconLoader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,14 +45,13 @@ import java.util.jar.JarFile;
 
 /**
  * Comparator dialog.
- *
- * @author Alexey Efimov
+ * 
+ * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
  */
 public class ComparatorDialog extends DialogWrapper implements ActionListener, ComparatorConfigurationListener {
     /**
      * ID
      */
-    @NonNls
     private static final String ID = "ComparatorDialog";
 
     /**
@@ -69,13 +67,11 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
     /**
      * Action command for Source browse button
      */
-    @NonNls
     private static final String AC_FROMPATH = "FROMPATH";
 
     /**
      * Action command for Comparable browse button
      */
-    @NonNls
     private static final String AC_TOPATH = "TOPATH";
 
     /**
@@ -87,7 +83,7 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
         super(project, true);
         this.project = project;
 
-        setTitle(APIComparatorBundle.message("comparator.title"));
+        setTitle(Plugin.localizer.getString("comparator.title"));
 
         ui = new UI();
         ui.getFromPathButton().setActionCommand(AC_FROMPATH);
@@ -96,27 +92,27 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
         ui.getToPathButton().addActionListener(this);
 
         // Change cancel text
-        setCancelButtonText(APIComparatorBundle.message("comparator.actions.close"));
-        setOKButtonText(APIComparatorBundle.message("comparator.actions.compare"));
+        setCancelButtonText(Plugin.localizer.getString("comparator.actions.close"));
+        setOKButtonText(Plugin.localizer.getString("comparator.actions.compare"));
 
         // Tree ui
         ui.getResultTree().setCellRenderer(
-                new TreeItemRenderer(
-                        new MarkupModel() {
-                            public MarkupAttributes getAttributes(TreeItemMarker marker) {
-                                if (TreeItemMarker.ADDED.equals(marker)) {
-                                    return new MarkupAttributes(new Color(10, 119, 0));
-                                } else if (TreeItemMarker.CHANGED.equals(marker)) {
-                                    return new MarkupAttributes(new Color(0, 50, 160));
-                                } else if (TreeItemMarker.REMOVED.equals(marker)) {
-                                    return new MarkupAttributes(new Color(153, 51, 0));
-                                } else if (TreeItemMarker.NOTCHANGED.equals(marker)) {
-                                    return new MarkupAttributes(Color.BLACK);
-                                }
-                                return null;
-                            }
+            new TreeItemRenderer(
+                new MarkupModel() {
+                    public MarkupAttributes getAttributes(TreeItemMarker marker) {
+                        if (TreeItemMarker.ADDED.equals(marker)) {
+                            return new MarkupAttributes(new Color(10, 119, 0));
+                        } else if (TreeItemMarker.CHANGED.equals(marker)) {
+                            return new MarkupAttributes(new Color(0, 50, 160));
+                        } else if (TreeItemMarker.REMOVED.equals(marker)) {
+                            return new MarkupAttributes(new Color(153, 51, 0));
+                        } else if (TreeItemMarker.NOTCHANGED.equals(marker)) {
+                            return new MarkupAttributes(Color.BLACK);
                         }
-                )
+                        return null;
+                    }
+                }
+            )
         );
         ui.getResultTree().setModel(new TreeItemModel());
 
@@ -178,9 +174,9 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
                 final File toFile = getFile(ui.getToPathCombo());
                 if (fromFile.equals(toFile)) {
                     Messages.showMessageDialog(
-                            APIComparatorBundle.message("comparator.files.equals.message"),
-                            APIComparatorBundle.message("comparator.title"),
-                            Messages.getInformationIcon()
+                        Plugin.localizer.getString("comparator.files.equals.message"),
+                        Plugin.localizer.getString("comparator.title"),
+                        Messages.getInformationIcon()
                     );
                 } else {
 
@@ -189,38 +185,38 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
 
                     try {
                         // Comparing
-                        ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                                new Runnable() {
-                                    public void run() {
-                                        ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+                       ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                            new Runnable() {
+                                public void run() {
+                                    ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
 
-                                        try {
-                                            TreeItem from = parseJarFile(fromFile);
-                                            TreeItem to = parseJarFile(toFile);
+                                    try {
+                                        TreeItem from = parseJarFile(fromFile);
+                                        TreeItem to = parseJarFile(toFile);
 
-                                            // Now comparing
-                                            indicator.setText(
-                                                    APIComparatorBundle.message("comparator.comparing.progress.wait")
-                                            );
-                                            indicator.setText2("");
-                                            indicator.setFraction(0.0d);
-                                            indicator.setIndeterminate(true);
+                                        // Now comparing
+                                        indicator.setText(
+                                            Plugin.localizer.getString("comparator.comparing.progress.wait")
+                                        );
+                                        indicator.setText2("");
+                                        indicator.setFraction(0.0d);
+                                        indicator.setIndeterminate(true);
 
-                                            TreeItem result = TreeComparator.compare(from, to);
-                                            if (indicator.isCanceled()) {
-                                                throw new ProcessCanceledException();
-                                            }
-                                            if (result != null) {
-                                                ((TreeItemModel) ui.getResultTree().getModel()).setRoot(result);
-                                            }
-                                        } catch (IOException e) {
-                                            Plugin.LOG.error(e);
+                                        TreeItem result = TreeComparator.compare(from, to);
+                                        if (indicator.isCanceled()) {
+                                            throw new ProcessCanceledException();
                                         }
+                                        if (result != null) {
+                                            ((TreeItemModel)ui.getResultTree().getModel()).setRoot(result);
+                                        }
+                                    } catch (IOException e) {
+                                        Plugin.logger.error(e);
                                     }
-                                },
-                                APIComparatorBundle.message("comparator.comparing.progress.title"),
-                                true,
-                                project
+                                }
+                            },
+                            Plugin.localizer.getString("comparator.comparing.progress.title"),
+                            true,
+                            project
                         );
                         // Update ui
                         ui.getResultTree().updateUI();
@@ -237,7 +233,7 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
         TreeParser jarParser = parserManager.getParser(jar);
 
         ProgressAdapter listener = new ProgressAdapter(
-                APIComparatorBundle.message("comparator.comparing.progress.parsing", file.getPath())
+            Plugin.localizer.format("comparator.comparing.progress.parsing", new Object[]{file.getPath()})
         );
         try {
             jarParser.addTreeParserListener(listener);
@@ -259,32 +255,24 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
      */
     private File getFile(JComboBox combo) {
         if (combo != null) {
-            return new File((String) combo.getSelectedItem()).getAbsoluteFile();
+            return new File((String)combo.getSelectedItem()).getAbsoluteFile();
         }
         return null;
     }
 
     /**
      * Convert text control to virtual file
-     *
-     * @param combo Combo box of file
-     * @return File matched by path in combo box
      */
     private VirtualFile getVirtualFile(JComboBox combo) {
-        String s = (String) combo.getSelectedItem();
-        if (s == null) {
-            s = "";
-        }
-        String path = s.trim().replace(File.separatorChar, '/');
+        String path = Strings.softTrim((String)combo.getSelectedItem()).replace(File.separatorChar, '/');
         return LocalFileSystem.getInstance().findFileByPath(path);
     }
 
     private boolean isValidJarPath(JComboBox combo) {
-        if (Plugin.LOG.assertTrue(combo != null)) {
+        if (Plugin.logger.assertTrue(combo != null)) {
             try {
                 return getJarFile(combo) != null;
             } catch (Exception e) {
-                Plugin.LOG.warn(e);
             }
         }
         return false;
@@ -300,12 +288,12 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
 
         if (AC_FROMPATH.equals(e.getActionCommand())) {
             target = ui.getFromPathCombo();
-            title = APIComparatorBundle.message("comparator.files.fromPath.fileChooser.title");
-            description = APIComparatorBundle.message("comparator.files.fromPath.fileChooser.description");
+            title = Plugin.localizer.getString("comparator.files.fromPath.fileChooser.title");
+            description = Plugin.localizer.getString("comparator.files.fromPath.fileChooser.description");
         } else if (AC_TOPATH.equals(e.getActionCommand())) {
             target = ui.getToPathCombo();
-            title = APIComparatorBundle.message("comparator.files.toPath.fileChooser.title");
-            description = APIComparatorBundle.message("comparator.files.toPath.fileChooser.description");
+            title = Plugin.localizer.getString("comparator.files.toPath.fileChooser.title");
+            description = Plugin.localizer.getString("comparator.files.toPath.fileChooser.description");
         }
 
         if (target != null) {
@@ -319,7 +307,7 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
             fcd.setHideIgnored(false);
 
             VirtualFile[] files = FileChooser.chooseFiles(ui.getRootPanel(), fcd, filePath);
-            if (files.length > 0) {
+            if (files != null && files.length > 0) {
                 String path = files[0].getPath().replace('/', File.separatorChar);
                 target.addItem(path);
             }
@@ -347,7 +335,7 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
 
         public void addElement(Object obj) {
             elements.add(obj);
-            configuration.addRecentEntry((String) obj);
+            configuration.addRecentEntry((String)obj);
             setSelectedItem(obj);
         }
 
@@ -357,7 +345,7 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
 
         public void insertElementAt(Object obj, int index) {
             elements.add(index, obj);
-            configuration.addRecentEntry((String) obj);
+            configuration.addRecentEntry((String)obj);
             setSelectedItem(obj);
         }
 
@@ -370,7 +358,7 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
         }
 
         public void setSelectedItem(Object anItem) {
-            selected = (String) anItem;
+            selected = (String)anItem;
         }
 
         public int getSize() {
@@ -384,8 +372,6 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
 
     /**
      * Set "From" file from {@link com.intellij.openapi.diff.DiffTool}
-     *
-     * @param content Content
      */
     public void setFromPathContent(DiffContent content) {
         String path = content.getFile().getPath().replace('/', File.separatorChar);
@@ -394,8 +380,6 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
 
     /**
      * Set "To" file from {@link com.intellij.openapi.diff.DiffTool}
-     *
-     * @param content Content
      */
     public void setToPathContent(DiffContent content) {
         String path = content.getFile().getPath().replace('/', File.separatorChar);
@@ -403,8 +387,8 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
     }
 
     public void recentListChanged() {
-        ((RecentFilesComboBoxModel) ui.getFromPathCombo().getModel()).update();
-        ((RecentFilesComboBoxModel) ui.getToPathCombo().getModel()).update();
+        ((RecentFilesComboBoxModel)ui.getFromPathCombo().getModel()).update();
+        ((RecentFilesComboBoxModel)ui.getToPathCombo().getModel()).update();
 
         ui.getFromPathCombo().updateUI();
         ui.getToPathCombo().updateUI();
@@ -414,9 +398,6 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
      * UI for {@link ComparatorDialog}
      */
     private class UI {
-        @NonNls
-        private static final String GENERAL_ELLIPSIS_PNG = "/general/ellipsis.png";
-
         private JPanel rootPanel;
         private JTree resultTree;
         private JComboBox fromPathCombo;
@@ -427,7 +408,7 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
         private JLabel fromPathLabel;
 
         public UI() {
-            Icon ellipsisIcon = IconLoader.getIcon(GENERAL_ELLIPSIS_PNG);
+            Icon ellipsisIcon = IconLoader.getIcon("/general/ellipsis.png");
 
             fromPathButton.setIcon(ellipsisIcon);
             fromPathButton.setText(null);
@@ -491,8 +472,8 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
             TreeParser parser = event.getParser();
 
             ProgressIndicator progressIndicator = getIndicator();
-            progressIndicator.setFraction(((double) parser.getCurrentIndex()) / parser.getSourceSize());
-            String name = (String) parser.getCurrentItem().getAttributeValue(TreeItemAttributes.ATTR_VALUE);
+            progressIndicator.setFraction(((double)parser.getCurrentIndex()) / parser.getSourceSize());
+            String name = (String)parser.getCurrentItem().getAttributeValue(TreeItemAttributes.ATTR_VALUE);
             if (name != null) {
                 progressIndicator.setText2(name);
             }

@@ -1,39 +1,38 @@
 package org.intellij.apiComparator.spi.markup;
 
-import java.text.MessageFormat;
+import org.phantom.lang.Enum;
 
 /**
  * The mark for markering comparison results.
- *
- * @author Alexey Efimov
+ * 
+ * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
  */
-public enum TreeItemMarker {
+public final class TreeItemMarker extends Enum {
     /**
      * Not changed mark
      */
-    NOTCHANGED,
+    public static final TreeItemMarker NOTCHANGED = new TreeItemMarker(0);
 
     /**
      * Changed mark
      */
-    CHANGED,
+    public static final TreeItemMarker CHANGED = new TreeItemMarker(1);
 
     /**
      * Mark of new added item
      */
-    ADDED,
+    public static final TreeItemMarker ADDED = new TreeItemMarker(2);
 
     /**
      * Mark of removed item
      */
-    REMOVED;
+    public static final TreeItemMarker REMOVED = new TreeItemMarker(3);
 
-    public static TreeItemMarker valueOf(int value) {
-        for (TreeItemMarker marker : TreeItemMarker.values()) {
-            if (marker.ordinal() == value) {
-                return marker;
-            }
-        }
-        throw new IllegalArgumentException(MessageFormat.format("can''t get enum for value {0}", value));
+    private TreeItemMarker(int i) {
+        super(new Integer(i));
+    }
+
+    public static TreeItemMarker parseInt(int value) {
+        return (TreeItemMarker)findValue(TreeItemMarker.class, new Integer(value));
     }
 }

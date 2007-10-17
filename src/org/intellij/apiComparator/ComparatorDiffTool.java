@@ -6,8 +6,8 @@ import com.intellij.openapi.diff.DiffTool;
 
 /**
  * API comparator diff tool.
- *
- * @author Alexey Efimov
+ * 
+ * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
  */
 public class ComparatorDiffTool implements DiffTool {
     public void show(DiffRequest request) {

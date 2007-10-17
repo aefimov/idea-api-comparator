@@ -2,8 +2,8 @@ package org.intellij.apiComparator;
 
 /**
  * Listener of configuration changes in {@link ComparatorConfiguration}
- *
- * @author Alexey Efimov
+ * 
+ * @author <a href="mailto:aefimov@spklabs.com">Alexey Efimov</a>
  */
 public interface ComparatorConfigurationListener {
     /**

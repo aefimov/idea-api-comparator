@@ -1,18 +1,49 @@
-<idea-plugin>
-    <name>API Comparator</name>
-    <description>Plugin for viewing API changes in jar files.</description>
+<idea-plugin url="@plugin.url@">
+  <vendor url="@plugin.author.url@" email="@plugin.author.email@">@plugin.author@</vendor>
+  <name>@plugin.name@</name>
+  <description>@plugin.description@</description>
+  <version build="@build.number@" build-date="@build.date@">@plugin.version@</version>
+  <change-notes><![CDATA[
+  0.3<ul>
+   <li>IDE 6 and Selena Compatible, tested with both 6.0.5, 7.0 M1a and 6951</li></ul>
+  0.2.1<ul>
+   <li>Hide added/removed/changed filter option</li>
+   <li>Progress monitor while comparison and snapshot loading</li>
+   <li>View offline comparison results</li>
+   <li>Bug fixes</li></ul>
+  <p>0.2<ul>
+   <li>Export to plain text</li>
+   <li>Saving size of dialogs</li>
+   <li>Improvements in comparison engine (support for ProgressMonitor in next version)</li>
+   <li>Bug fixes</li></ul>
+  <p>0.1.1
+   <li>DiffTool support</li>
+   <li>Bug fixes in configuration states</li></ul>
+  <p>0.1
+   <li>Recent files</li>
+   <li>Option to show only changes in tree</li>
+   <li>Option to show/hide class members</li>
+   <li>Show comparison results in one tree</li>
+   <li>Whole changed core of plugin code</li></ul>
+  <p>0.0.2
+   <li>Rewriten comparison engine</li
+   ><li>Dialog with progress bar while processing</li>
+   <li>GUI improvements</li>
+   <li>All UI form rebuilded with UI designer</li></ul>
+  <p>0.0.1
+   <li>Refactored Timur's Zambalayev tool for API comparison (many thanks, Timur)</li>
+   <li>Simple GUI for comparator</li>
+   <li>Simple plugin for IntelliJ IDEA</li></ul>]]></change-notes>
 
-    <version>0.4</version>
-    <vendor>Alexey Efimov</vendor>
-    <idea-version since-build="7065"/>
+  <idea-version min="6000"/>
+  <application-components>
+    <component>
+      <implementation-class>org.intellij.apiComparator.ComparatorManager</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.intellij.apiComparator.ComparatorConfiguration</implementation-class>
+    </component>
+  </application-components>
 
-    <application-components>
-        <component>
-            <implementation-class>org.intellij.apiComparator.ComparatorManager</implementation-class>
-        </component>
-        <component>
-            <implementation-class>org.intellij.apiComparator.ComparatorConfiguration</implementation-class>
-        </component>
-    </application-components>
 </idea-plugin>
 
