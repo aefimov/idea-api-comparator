@@ -22,7 +22,7 @@ public class TreeItemModel implements TreeModel {
     /**
      * Tree model listeners
      */
-    private List listeners = new ArrayList();
+    private List<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
 
     /**
      * Tree root item
@@ -32,7 +32,7 @@ public class TreeItemModel implements TreeModel {
     /**
      * Filters
      */
-    private List filters = new ArrayList();
+    private List<TreeItemFilter> filters = new ArrayList<TreeItemFilter>();
 
     public void setRoot(TreeItem root) {
         this.root = root;
@@ -49,10 +49,8 @@ public class TreeItemModel implements TreeModel {
     /**
      * Comparator
      */
-    private static final Comparator treeComparator = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            TreeItem t1 = (TreeItem) o1;
-            TreeItem t2 = (TreeItem) o2;
+    private static final Comparator<TreeItem> treeComparator = new Comparator<TreeItem>() {
+        public int compare(TreeItem t1, TreeItem t2) {
             if (t1 == null && t2 != null) {
                 return 1;
             }
@@ -110,25 +108,25 @@ public class TreeItemModel implements TreeModel {
 
     public Object getChild(Object parent, int index) {
         if (filters.size() > 0) {
-            return (TreeItem) ((TreeItem) parent).getFilteredChildren().get(index);
+            return ((TreeItem) parent).getFilteredChildren().get(index);
         } else {
-            return (TreeItem) ((TreeItem) parent).getChildren().get(index);
+            return ((TreeItem) parent).getChildren().get(index);
         }
     }
 
     public int getIndexOfChild(Object parent, Object child) {
+        TreeItem childItem = (TreeItem) child;
         if (filters.size() > 0) {
-            return ((TreeItem) parent).getFilteredChildren().indexOf(child);
+            return ((TreeItem) parent).getFilteredChildren().indexOf(childItem);
         } else {
-            return ((TreeItem) parent).getChildren().indexOf(child);
+            return ((TreeItem) parent).getChildren().indexOf(childItem);
         }
     }
 
     public void valueForPathChanged(TreePath path, Object newValue) {
-        for (Object listener1 : listeners) {
-            TreeModelListener listener = (TreeModelListener) listener1;
+        for (TreeModelListener listener1 : listeners) {
             TreeModelEvent event = new TreeModelEvent(newValue, path);
-            listener.treeNodesChanged(event);
+            listener1.treeNodesChanged(event);
         }
     }
 
@@ -148,14 +146,13 @@ public class TreeItemModel implements TreeModel {
 
     private void rebuildFilteredChildren(TreeItem item) {
         if (item != null) {
-            List children = item.getChildren();
-            List filteredChildren = item.getFilteredChildren();
+            List<TreeItem> children = item.getChildren();
+            List<TreeItem> filteredChildren = item.getFilteredChildren();
             filteredChildren.clear();
-            for (Object aChildren : children) {
-                TreeItem child = (TreeItem) aChildren;
-                if (isFiltersAccept(child)) {
-                    filteredChildren.add(child);
-                    rebuildFilteredChildren(child);
+            for (TreeItem aChildren : children) {
+                if (isFiltersAccept(aChildren)) {
+                    filteredChildren.add(aChildren);
+                    rebuildFilteredChildren(aChildren);
                 }
             }
         }
@@ -165,9 +162,8 @@ public class TreeItemModel implements TreeModel {
      * Return true if one or more filters accept {@link TreeItem}.
      */
     private boolean isFiltersAccept(TreeItem item) {
-        for (Object filter1 : filters) {
-            TreeItemFilter filter = (TreeItemFilter) filter1;
-            if (!filter.accept(item)) {
+        for (TreeItemFilter filter1 : filters) {
+            if (!filter1.accept(item)) {
                 return false;
             }
         }

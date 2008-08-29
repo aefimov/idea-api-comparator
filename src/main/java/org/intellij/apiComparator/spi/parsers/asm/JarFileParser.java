@@ -117,7 +117,7 @@ class JarFileParser extends AbstractTreeParser {
     private TreeItem slideDown(TreeItem currentItem) {
         if (currentItem != null) {
             while (currentItem.getChildren().size() == 1 && !(currentItem instanceof JavaClassTreeItem)) {
-                currentItem = (TreeItem) currentItem.getChildren().get(0);
+                currentItem = currentItem.getChildren().get(0);
             }
         }
         return currentItem;
