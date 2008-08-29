@@ -88,8 +88,7 @@ public class LoadShapshotAction extends AnAction {
                                             indicator.setText(
                                                     APIComparatorBundle.message(
                                                             "comparator.loadsnapshot.progress.loading",
-                                                            new Object[]{file.getPath()}
-                                                    )
+                                                            file.getPath())
                                             );
 
                                             inputStream = new FileInputStream(file);

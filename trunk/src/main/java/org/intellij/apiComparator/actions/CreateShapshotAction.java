@@ -56,10 +56,10 @@ public class CreateShapshotAction extends AnAction {
             JFileChooser jfc = new JFileChooser();
             jfc.setAcceptAllFileFilterUsed(false);
             jfc.addChoosableFileFilter(
-                    new FileTypeFilter(StdFileTypes.XML)
+                    new FileTypeFilter(StdFileTypes.XML, "comparator.fileChooser.snapshot.filter.xml.description")
             );
             jfc.addChoosableFileFilter(
-                    new FileTypeFilter(StdFileTypes.ARCHIVE)
+                    new FileTypeFilter(StdFileTypes.ARCHIVE, "comparator.fileChooser.snapshot.filter.zip.description")
             );
             jfc.setDialogTitle(APIComparatorBundle.message("comparator.fileChooser.snapshot.save.title"));
             jfc.setDialogType(JFileChooser.SAVE_DIALOG);
@@ -121,14 +121,14 @@ public class CreateShapshotAction extends AnAction {
                                                     }
                                                     TreeItemModel model = (TreeItemModel) tree.getModel();
                                                     TreeItem item = (TreeItem) model.getRoot();
-                                                    Element element = TreeItem.createElement();
                                                     indicator.setText(
                                                             APIComparatorBundle.message(
                                                                     "comparator.createsnapshot.progress.preparing"
                                                             )
                                                     );
                                                     // Write to JDOM
-                                                    item.writeExternal(element);
+                                                    final Element state = item.getState();
+
                                                     if (indicator.isCanceled()) {
                                                         throw new ProcessCanceledException();
                                                     }
@@ -140,7 +140,7 @@ public class CreateShapshotAction extends AnAction {
                                                             )
                                                     );
                                                     // Write to file
-                                                    JDOMUtil.writeDocument(new Document(element), outputStream, "\n");
+                                                    JDOMUtil.writeDocument(new Document(state), outputStream, "\n");
                                                 } finally {
                                                     outputStream.close();
                                                 }

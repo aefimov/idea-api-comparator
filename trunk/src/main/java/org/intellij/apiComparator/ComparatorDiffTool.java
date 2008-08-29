@@ -26,8 +26,8 @@ public class ComparatorDiffTool implements DiffTool {
         if (request != null) {
             DiffContent[] contents = request.getContents();
             if (contents != null) {
-                for (int i = 0; i < contents.length; i++) {
-                    if (!comparator.isValidFile(contents[i].getFile())) {
+                for (DiffContent content : contents) {
+                    if (!comparator.isValidFile(content.getFile())) {
                         return false;
                     }
                 }

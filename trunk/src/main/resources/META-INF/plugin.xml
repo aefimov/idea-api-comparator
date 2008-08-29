@@ -1,8 +1,11 @@
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD"
+        "http://plugins.intellij.net/plugin.dtd">
 <idea-plugin>
     <name>API Comparator</name>
     <description>Plugin for viewing API changes in jar files.</description>
 
-    <version>0.4</version>
+    <version>${project.version}</version>
+    <!--<version>0.4</version>-->
     <vendor>Alexey Efimov</vendor>
     <idea-version since-build="7065"/>
 
