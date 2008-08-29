@@ -31,17 +31,17 @@ public class TreeItem implements PersistentStateComponent<Element> {
     /**
      * Item attributes
      */
-    private Map attributes;
+    private Map<String, Object> attributes;
 
     /**
      * Children
      */
-    private List children = new ArrayList();
+    private List<TreeItem> children = new ArrayList<TreeItem>();
 
     /**
      * Children
      */
-    private List filteredChildren = new ArrayList();
+    private List<TreeItem> filteredChildren = new ArrayList<TreeItem>();
 
     /**
      * Parent {@link TreeItem}
@@ -73,7 +73,7 @@ public class TreeItem implements PersistentStateComponent<Element> {
         setParentMarker();
     }
 
-    public List getChildren() {
+    public List<TreeItem> getChildren() {
         return children;
     }
 
@@ -84,7 +84,7 @@ public class TreeItem implements PersistentStateComponent<Element> {
         int index = indexOfChild(child);
         if (index != -1) {
             // Item already exists
-            List children = child.getChildren();
+            List<TreeItem> children = child.getChildren();
             // Get this existing item
             TreeItem oldChild = getChild(index);
             // Set types in case of inner classes
@@ -95,8 +95,8 @@ public class TreeItem implements PersistentStateComponent<Element> {
                 oldChild.setAccessType(child.getAccessType());
             }
             // Add all children (if not exists)
-            for (Object aChildren : children) {
-                oldChild.addChild((TreeItem) aChildren);
+            for (TreeItem aChildren : children) {
+                oldChild.addChild(aChildren);
             }
         } else {
             // Item not exists
@@ -110,10 +110,10 @@ public class TreeItem implements PersistentStateComponent<Element> {
     }
 
     public TreeItem getChild(int index) {
-        return (TreeItem) children.get(index);
+        return children.get(index);
     }
 
-    public List getFilteredChildren() {
+    public List<TreeItem> getFilteredChildren() {
         return filteredChildren;
     }
 
@@ -130,7 +130,7 @@ public class TreeItem implements PersistentStateComponent<Element> {
         if (attributes == null) {
             synchronized (this) {
                 if (attributes == null) {
-                    attributes = new Hashtable();
+                    attributes = new Hashtable<String, Object>();
                 }
             }
         }
@@ -231,12 +231,11 @@ public class TreeItem implements PersistentStateComponent<Element> {
         return new Element(JDOM_NODE_ITEM);
     }
 
-    public void sort(Comparator comparator) {
+    public void sort(Comparator<TreeItem> comparator) {
         Collections.sort(children, comparator);
         Collections.sort(filteredChildren, comparator);
-        for (Object aChildren : children) {
-            TreeItem item = (TreeItem) aChildren;
-            item.sort(comparator);
+        for (TreeItem aChildren : children) {
+            aChildren.sort(comparator);
         }
     }
 
@@ -244,8 +243,7 @@ public class TreeItem implements PersistentStateComponent<Element> {
         Element element = createElement();
         // Save attributes
         if (attributes != null) {
-            for (Object o : attributes.keySet()) {
-                String name = (String) o;
+            for (String name : attributes.keySet()) {
                 element.setAttribute(name, String.valueOf(attributes.get(name)));
             }
         }
@@ -261,10 +259,10 @@ public class TreeItem implements PersistentStateComponent<Element> {
         }
 
         // Put children
-        for (Object aChildren : children) {
-            element.addContent(((TreeItem) aChildren).getState());
+        for (TreeItem aChildren : children) {
+            element.addContent((aChildren).getState());
         }
-        return null;
+        return element;
     }
 
     public void loadState(Element state) {

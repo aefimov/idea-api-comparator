@@ -3,7 +3,9 @@ package org.intellij.apiComparator.spi.markup;
 
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.ui.LayeredIcon;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.text.MessageFormat;
@@ -14,19 +16,22 @@ import java.text.MessageFormat;
  * @author Alexey Efimov
  */
 public enum TreeItemType {
-    // todo merge staticMark/png with class.png/ect for STATIC_CLASS ?
     UNKNOWN(-1, StdFileTypes.UNKNOWN.getIcon()),
     ARCHIVE(0, StdFileTypes.ARCHIVE.getIcon()),
     FOLDER(0, "/nodes/folder.png", "/nodes/folderOpen.png"),
     PACKAGE(1, "/nodes/packageClosed.png", "/nodes/packageOpen.png"),
-    STATIC_CLASS(2, /*"/nodes/staticClass.png"*/"/nodes/class.png"), // staticClass does not exist in icons.jar
+    STATIC_CLASS(2, makeStaticIcon("/nodes/class.png")),
     CLASS(2, "/nodes/class.png"),
-    STATIC_INTERFACE(2, /*"/nodes/staticInterface.png"*/"/nodes/interface.png"),// staticInterface does not exist in icons.jar
+    STATIC_INTERFACE(2, makeStaticIcon("/nodes/interface.png")),
     INTERFACE(2, "/nodes/interface.png"),
-    STATIC_FIELD(3, /*"/nodes/staticField.png"*/"/nodes/static.png"),// staticField does not exist in icons.jar
+    STATIC_FIELD(3, makeStaticIcon("/nodes/field.png")),
     FIELD(3, "/nodes/field.png"),
-    STATIC_METHOD(4, "/nodes/static.png"),
+    STATIC_METHOD(4, makeStaticIcon("/nodes/method.png")),
     METHOD(4, "/nodes/method.png");
+
+    private static Icon makeStaticIcon(@NotNull String icon) {
+        return LayeredIcon.create(IconLoader.getIcon(icon), IconLoader.getIcon("/nodes/staticMark.png"));
+    }
 
     private Icon closed;
     private Icon open;

@@ -24,6 +24,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 import javax.swing.*;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -108,7 +109,7 @@ public class CreateShapshotAction extends AnAction {
                                     new Runnable() {
                                         public void run() {
                                             try {
-                                                OutputStream outputStream = new FileOutputStream(snapshotFile);
+                                                OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(snapshotFile));
                                                 try {
                                                     ProgressManager progressManager = ProgressManager.getInstance();
                                                     ProgressIndicator indicator = progressManager.getProgressIndicator();
@@ -136,8 +137,7 @@ public class CreateShapshotAction extends AnAction {
                                                     indicator.setText(
                                                             APIComparatorBundle.message(
                                                                     "comparator.createsnapshot.progress.saving",
-                                                                    new Object[]{snapshotFile.getPath()}
-                                                            )
+                                                                    snapshotFile.getPath())
                                                     );
                                                     // Write to file
                                                     JDOMUtil.writeDocument(new Document(state), outputStream, "\n");
