@@ -3,7 +3,8 @@ package org.intellij.apiComparator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.util.JDOMExternalizable;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +16,15 @@ import java.util.List;
  *
  * @author Alexey Efimov
  */
-public class ComparatorConfiguration implements ApplicationComponent, JDOMExternalizable, PersistentStateComponent<Element> {
+@State(
+        name = "APIComparatorConfiguration",
+        storages = {
+                @Storage(
+                        id = "apicomparator",
+                        file = "$APP_CONFIG$/apicomparator.xml"
+                )}
+)
+public class ComparatorConfiguration implements ApplicationComponent, PersistentStateComponent<Element> {
     /**
      * Listeners
      */
@@ -82,19 +91,15 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
 
 
     public void loadState(Element state) {
-        readExternal(state);
-    }
-
-    public void readExternal(Element element) {
         ComparatorManager comparator = ComparatorManager.getInstance();
 
-        showMembers = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_MEMBERS));
-        showChangesOnly = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_CHANGES_ONLY));
-        hideRemoved = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_HIDE_REMOVED));
-        hideAdded = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_HIDE_ADDED));
-        hideChanged = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_HIDE_CHANGED));
+        showMembers = Boolean.valueOf(state.getAttributeValue(JDOM_ATTR_MEMBERS));
+        showChangesOnly = Boolean.valueOf(state.getAttributeValue(JDOM_ATTR_CHANGES_ONLY));
+        hideRemoved = Boolean.valueOf(state.getAttributeValue(JDOM_ATTR_HIDE_REMOVED));
+        hideAdded = Boolean.valueOf(state.getAttributeValue(JDOM_ATTR_HIDE_ADDED));
+        hideChanged = Boolean.valueOf(state.getAttributeValue(JDOM_ATTR_HIDE_CHANGED));
 
-        Element recentElement = element.getChild(JDOM_NODE_RECENT);
+        Element recentElement = state.getChild(JDOM_NODE_RECENT);
         if (recentElement != null) {
             try {
                 recentMaxCount = Integer.parseInt(recentElement.getAttributeValue(JDOM_NODE_RECENT_MAXCOUNT));
@@ -116,16 +121,11 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
 
     public Element getState() {
         Element state = new Element("configuration");
-        writeExternal(state);
-        return state;
-    }
-
-    public void writeExternal(Element element) {
-        element.setAttribute(JDOM_ATTR_MEMBERS, Boolean.toString(showMembers));
-        element.setAttribute(JDOM_ATTR_CHANGES_ONLY, Boolean.toString(showChangesOnly));
-        element.setAttribute(JDOM_ATTR_HIDE_ADDED, Boolean.toString(hideAdded));
-        element.setAttribute(JDOM_ATTR_HIDE_CHANGED, Boolean.toString(hideChanged));
-        element.setAttribute(JDOM_ATTR_HIDE_REMOVED, Boolean.toString(hideRemoved));
+        state.setAttribute(JDOM_ATTR_MEMBERS, Boolean.toString(showMembers));
+        state.setAttribute(JDOM_ATTR_CHANGES_ONLY, Boolean.toString(showChangesOnly));
+        state.setAttribute(JDOM_ATTR_HIDE_ADDED, Boolean.toString(hideAdded));
+        state.setAttribute(JDOM_ATTR_HIDE_CHANGED, Boolean.toString(hideChanged));
+        state.setAttribute(JDOM_ATTR_HIDE_REMOVED, Boolean.toString(hideRemoved));
 
         Element recentElement = new Element(JDOM_NODE_RECENT);
         recentElement.setAttribute(JDOM_NODE_RECENT_MAXCOUNT, String.valueOf(recentMaxCount));
@@ -138,7 +138,8 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
             recentElement.addContent(entryElement);
         }
 
-        element.addContent(recentElement);
+        state.addContent(recentElement);
+        return state;
     }
 
     public static ComparatorConfiguration getInstance() {
