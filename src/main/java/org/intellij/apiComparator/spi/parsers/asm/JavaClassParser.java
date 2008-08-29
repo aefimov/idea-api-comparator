@@ -36,7 +36,7 @@ public class JavaClassParser extends AbstractTreeParser implements ClassVisitor 
     }
 
     protected void performParse() {
-        ((ClassReader) source).accept(this, false);
+        ((ClassReader) source).accept(this, ClassReader.SKIP_DEBUG);
     }
 
     public void visit(

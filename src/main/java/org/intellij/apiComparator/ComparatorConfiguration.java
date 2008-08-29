@@ -6,6 +6,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
     /**
      * Listeners
      */
-    private List/*<ComparatorConfigurationListener>*/ listeners = new ArrayList/*<ComparatorConfigurationListener>*/();
+    private List<ComparatorConfigurationListener> listeners = new ArrayList<ComparatorConfigurationListener>();
 
     /**
      * Show members toogle action state
@@ -67,6 +68,7 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
     private static final String JDOM_NODE_RECENT_ENTRY = "entry";
     private static final String JDOM_ATTR_RECENT_ENTRY_PATH = "path";
 
+    @NotNull
     public String getComponentName() {
         String className = getClass().getName();
         String[] names = className.split("\\.");
@@ -82,11 +84,11 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
     public void readExternal(Element element) throws InvalidDataException {
         ComparatorManager comparator = ComparatorManager.getInstance();
 
-        showMembers = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_MEMBERS)).booleanValue();
-        showChangesOnly = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_CHANGES_ONLY)).booleanValue();
-        hideRemoved = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_HIDE_REMOVED)).booleanValue();
-        hideAdded = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_HIDE_ADDED)).booleanValue();
-        hideChanged = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_HIDE_CHANGED)).booleanValue();
+        showMembers = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_MEMBERS));
+        showChangesOnly = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_CHANGES_ONLY));
+        hideRemoved = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_HIDE_REMOVED));
+        hideAdded = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_HIDE_ADDED));
+        hideChanged = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_HIDE_CHANGED));
 
         Element recentElement = element.getChild(JDOM_NODE_RECENT);
         if (recentElement != null) {
@@ -95,8 +97,8 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
             } catch (NumberFormatException e) {
             }
             List entries = recentElement.getChildren(JDOM_NODE_RECENT_ENTRY);
-            for (int i = 0; i < entries.size(); i++) {
-                Element entry = (Element) entries.get(i);
+            for (Object entry1 : entries) {
+                Element entry = (Element) entry1;
                 String path = entry.getAttributeValue(JDOM_ATTR_RECENT_ENTRY_PATH);
                 if (comparator.isValidPath(path) && !recentEntries.contains(path)) {
                     recentEntries.add(path);
@@ -119,9 +121,9 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
         recentElement.setAttribute(JDOM_NODE_RECENT_MAXCOUNT, String.valueOf(recentMaxCount));
 
         // Write all recent files
-        for (int i = 0; i < recentEntries.size(); i++) {
+        for (Object recentEntry : recentEntries) {
             Element entryElement = new Element(JDOM_NODE_RECENT_ENTRY);
-            entryElement.setAttribute(JDOM_ATTR_RECENT_ENTRY_PATH, (String) recentEntries.get(i));
+            entryElement.setAttribute(JDOM_ATTR_RECENT_ENTRY_PATH, (String) recentEntry);
 
             recentElement.addContent(entryElement);
         }
@@ -129,8 +131,8 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
         element.addContent(recentElement);
     }
 
-    public static final ComparatorConfiguration getInstance() {
-        return (ComparatorConfiguration) ApplicationManager.getApplication().getComponent(
+    public static ComparatorConfiguration getInstance() {
+        return ApplicationManager.getApplication().getComponent(
                 ComparatorConfiguration.class
         );
     }
@@ -221,9 +223,8 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
     }
 
     private void fireRecentListChanged() {
-        for (int i = 0; i < listeners.size(); i++) {
-            ComparatorConfigurationListener listener = (ComparatorConfigurationListener) listeners.get(i);
-            listener.recentListChanged();
+        for (ComparatorConfigurationListener listener1 : listeners) {
+            listener1.recentListChanged();
         }
     }
 }

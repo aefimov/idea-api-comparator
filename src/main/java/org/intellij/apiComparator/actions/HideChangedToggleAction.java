@@ -33,8 +33,8 @@ public class HideChangedToggleAction extends ToggleAction {
             if (!result) {
                 // Check children
                 List children = item.getChildren();
-                for (int i = 0; i < children.size(); i++) {
-                    TreeItem child = (TreeItem) children.get(i);
+                for (Object aChildren : children) {
+                    TreeItem child = (TreeItem) aChildren;
                     if (TreeItemMarker.CHANGED.equals(child.getMarker()) && accept(child)) {
                         return true;
                     } else if (

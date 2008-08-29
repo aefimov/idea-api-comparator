@@ -19,7 +19,7 @@ public final class APIComparatorBundle {
     private APIComparatorBundle() {
     }
 
-    public static String message(@PropertyKey(resourceBundle = BUNDLE_NAME)String key, Object... params) {
+    public static String message(@PropertyKey(resourceBundle = BUNDLE_NAME) String key, Object... params) {
         return CommonBundle.message(BUNDLE, key, params);
     }
 }
