@@ -3,7 +3,7 @@ package org.intellij.apiComparator.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -152,11 +152,11 @@ public class CreateShapshotAction extends AnAction {
                                     },
                                     APIComparatorBundle.message("comparator.createsnapshot.progress.title"),
                                     true,
-                                    (Project) e.getDataContext().getData(DataConstants.PROJECT)
+                                    DataKeys.PROJECT.getData(e.getDataContext())
                             );
                             // Notification in status bar
                             WindowManager windowManager = WindowManager.getInstance();
-                            Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
+                            Project project = DataKeys.PROJECT.getData(e.getDataContext());
                             if (project != null) {
                                 StatusBar statusBar = windowManager.getStatusBar(project);
                                 statusBar.setInfo(

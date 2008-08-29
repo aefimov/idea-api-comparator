@@ -2,8 +2,7 @@ package org.intellij.apiComparator.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataConstants;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.actionSystem.DataKeys;
 import org.intellij.apiComparator.ComparatorDialog;
 import org.intellij.apiComparator.util.APIComparatorBundle;
 
@@ -24,7 +23,7 @@ public class RunComparatorAction extends AnAction {
 
     public void actionPerformed(AnActionEvent e) {
         ComparatorDialog comparatorDialog = new ComparatorDialog(
-                (Project) e.getDataContext().getData(DataConstants.PROJECT)
+                DataKeys.PROJECT.getData(e.getDataContext())
         );
         comparatorDialog.show();
     }

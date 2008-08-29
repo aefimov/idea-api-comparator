@@ -14,7 +14,7 @@ public abstract class AbstractTreeParser implements TreeParser, Runnable {
     /**
      * Listeners
      */
-    private List listeners = new ArrayList();
+    private List<TreeParserListener> listeners = new ArrayList<TreeParserListener>();
 
     private int sourceSize;
     private int currentIndex;
@@ -112,9 +112,8 @@ public abstract class AbstractTreeParser implements TreeParser, Runnable {
         if (source != null) {
             started = true;
             TreeParserEvent event = new TreeParserEvent(this, source);
-            for (Object listener1 : listeners) {
-                TreeParserListener listener = (TreeParserListener) listener1;
-                listener.start(event);
+            for (TreeParserListener listener1 : listeners) {
+                listener1.start(event);
             }
         } else {
             throw new IllegalStateException();
@@ -126,9 +125,8 @@ public abstract class AbstractTreeParser implements TreeParser, Runnable {
      */
     protected void fireNextEvent() {
         TreeParserEvent event = new TreeParserEvent(this, currentItem);
-        for (Object listener1 : listeners) {
-            TreeParserListener listener = (TreeParserListener) listener1;
-            listener.next(event);
+        for (TreeParserListener listener1 : listeners) {
+            listener1.next(event);
         }
     }
 
@@ -139,9 +137,8 @@ public abstract class AbstractTreeParser implements TreeParser, Runnable {
         completed = true;
         if (result != null) {
             TreeParserEvent event = new TreeParserEvent(this, result);
-            for (Object listener1 : listeners) {
-                TreeParserListener listener = (TreeParserListener) listener1;
-                listener.complete(event);
+            for (TreeParserListener listener1 : listeners) {
+                listener1.complete(event);
             }
         }
     }
