@@ -86,6 +86,7 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
     public ComparatorDialog(Project project) {
         super(project, true);
         this.project = project;
+        this.setModal(false);
 
         setTitle(APIComparatorBundle.message("comparator.title"));
 
@@ -334,7 +335,7 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
          * Current selected path
          */
         private String selected;
-        private List elements = new ArrayList();
+        private List<String> elements = new ArrayList<String>();
 
         public RecentFilesComboBoxModel() {
             update();
@@ -346,17 +347,17 @@ public class ComparatorDialog extends DialogWrapper implements ActionListener, C
         }
 
         public void addElement(Object obj) {
-            elements.add(obj);
+            elements.add((String) obj);
             configuration.addRecentEntry((String) obj);
             setSelectedItem(obj);
         }
 
         public void removeElement(Object obj) {
-            elements.remove(obj);
+            elements.remove((String) obj);
         }
 
         public void insertElementAt(Object obj, int index) {
-            elements.add(index, obj);
+            elements.add(index, (String) obj);
             configuration.addRecentEntry((String) obj);
             setSelectedItem(obj);
         }

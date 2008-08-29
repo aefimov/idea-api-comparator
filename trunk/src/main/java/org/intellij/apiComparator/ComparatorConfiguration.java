@@ -2,9 +2,8 @@ package org.intellij.apiComparator;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,7 @@ import java.util.List;
  *
  * @author Alexey Efimov
  */
-public class ComparatorConfiguration implements ApplicationComponent, JDOMExternalizable {
+public class ComparatorConfiguration implements ApplicationComponent, JDOMExternalizable, PersistentStateComponent<Element> {
     /**
      * Listeners
      */
@@ -50,7 +49,7 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
     /**
      * Recent entries
      */
-    private List recentEntries = new ArrayList();
+    private List<String> recentEntries = new ArrayList<String>();
 
     /**
      * Recent limit
@@ -81,7 +80,12 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
     public void disposeComponent() {
     }
 
-    public void readExternal(Element element) throws InvalidDataException {
+
+    public void loadState(Element state) {
+        readExternal(state);
+    }
+
+    public void readExternal(Element element) {
         ComparatorManager comparator = ComparatorManager.getInstance();
 
         showMembers = Boolean.valueOf(element.getAttributeValue(JDOM_ATTR_MEMBERS));
@@ -110,7 +114,13 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
         }
     }
 
-    public void writeExternal(Element element) throws WriteExternalException {
+    public Element getState() {
+        Element state = new Element("configuration");
+        writeExternal(state);
+        return state;
+    }
+
+    public void writeExternal(Element element) {
         element.setAttribute(JDOM_ATTR_MEMBERS, Boolean.toString(showMembers));
         element.setAttribute(JDOM_ATTR_CHANGES_ONLY, Boolean.toString(showChangesOnly));
         element.setAttribute(JDOM_ATTR_HIDE_ADDED, Boolean.toString(hideAdded));
@@ -121,9 +131,9 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
         recentElement.setAttribute(JDOM_NODE_RECENT_MAXCOUNT, String.valueOf(recentMaxCount));
 
         // Write all recent files
-        for (Object recentEntry : recentEntries) {
+        for (String recentEntry : recentEntries) {
             Element entryElement = new Element(JDOM_NODE_RECENT_ENTRY);
-            entryElement.setAttribute(JDOM_ATTR_RECENT_ENTRY_PATH, (String) recentEntry);
+            entryElement.setAttribute(JDOM_ATTR_RECENT_ENTRY_PATH, recentEntry);
 
             recentElement.addContent(entryElement);
         }
@@ -178,7 +188,7 @@ public class ComparatorConfiguration implements ApplicationComponent, JDOMExtern
     }
 
     public String[] getRecentEntries() {
-        return (String[]) recentEntries.toArray(new String[]{});
+        return recentEntries.toArray(new String[recentEntries.size()]);
     }
 
     public void addRecentEntry(String path) {

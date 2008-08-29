@@ -9,7 +9,8 @@
     <idea-version since-build="7065"/>
     <change-notes><![CDATA[
     0.4<ul>
-     <li>IDE 7 and 8 (up to 8733 at least) Compatible, tested with both 7.0.4 and 8733</li></ul>
+     <li><a href="http://code.google.com/p/idea-api-comparator/issues/detail?id=2">Make the Api Comparator dialog non modal</a></li>
+     <li><a href="http://code.google.com/p/idea-api-comparator/issues/detail?id=3">IDE 7 and 8 (up to 8733 at least) Compatible</a>, tested with both 7.0.4 and 8733</li></ul>
     0.3<ul>
      <li>IDE 6 and Selena Compatible, tested with both 6.0.5, 7.0 M1a and 6951</li></ul>
     0.2.1<ul>
@@ -40,6 +41,7 @@
      <li>Refactored Timur's Zambalayev tool for API comparison (many thanks, Timur)</li>
      <li>Simple GUI for comparator</li>
      <li>Simple plugin for IntelliJ IDEA</li></ul>]]></change-notes>
+    <category>Code tools</category>
     <application-components>
         <component>
             <implementation-class>org.intellij.apiComparator.ComparatorManager</implementation-class>

@@ -3,7 +3,7 @@ package org.intellij.apiComparator.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -111,7 +111,9 @@ public class LoadShapshotAction extends AnAction {
                                             throw new ProcessCanceledException();
                                         } finally {
                                             try {
-                                                inputStream.close();
+                                                if (inputStream != null) {
+                                                    inputStream.close();
+                                                }
                                             } catch (IOException ioe) {
                                             }
                                         }
@@ -119,7 +121,7 @@ public class LoadShapshotAction extends AnAction {
                                 },
                                 APIComparatorBundle.message("comparator.loadsnapshot.progress.title"),
                                 true,
-                                (Project) e.getDataContext().getData(DataConstants.PROJECT)
+                                DataKeys.PROJECT.getData(e.getDataContext())
                         );
                         tree.updateUI();
                     } catch (ProcessCanceledException ex) {
@@ -128,7 +130,7 @@ public class LoadShapshotAction extends AnAction {
                 }
                 // Notification in status bar
                 WindowManager windowManager = WindowManager.getInstance();
-                Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
+                Project project = DataKeys.PROJECT.getData(e.getDataContext());
                 if (project != null) {
                     StatusBar statusBar = windowManager.getStatusBar(project);
                     statusBar.setInfo(
