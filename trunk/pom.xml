@@ -1,19 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>apiComparator</groupId>
     <artifactId>apiComparator</artifactId>
     <packaging>jar</packaging>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4</version>
     <name>IDEA APIComparator plugin</name>
     <description>Plugin for viewing API changes in jar files.</description>
     <properties>
         <idea.version>7.0.3</idea.version>
     </properties>
     <scm>
-        <connection>scm:svn:http://idea-api-comparator.googlecode.com/svn/trunk/</connection>
-        <developerConnection>scm:svn:https://idea-api-comparator.googlecode.com/svn/trunk/</developerConnection>
-        <url>http://idea-api-comparator.googlecode.com/svn/trunk/</url>
+        <connection>scm:svn:http://idea-api-comparator.googlecode.com/svn/tags/release 0.4</connection>
+        <developerConnection>scm:svn:https://idea-api-comparator.googlecode.com/svn/tags/release 0.4</developerConnection>
+        <url>http://idea-api-comparator.googlecode.com/svn/tags/release 0.4</url>
     </scm>
     <dependencies>
         <dependency>
