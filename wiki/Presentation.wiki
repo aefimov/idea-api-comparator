@@ -4,8 +4,8 @@
 
 Plugin to comparing JAR files for API changes. This plugin uses IDEA packaged asm for reading class files and detecting API changes.
 
-API Comparator 0.2.1.1 screenshot: 
-
+API Comparator 0.4 screenshot: 
+http://idea-api-comparator.googlecode.com/svn/wiki/plugin-overview.png
 
 = Using =
 
