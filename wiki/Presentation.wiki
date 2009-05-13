@@ -1,0 +1,72 @@
+#summary Overall description of the plugin.
+
+= Description =
+
+Plugin to comparing JAR files for API changes. This plugin uses IDEA packaged asm for reading class files and detecting API changes.
+
+API Comparator 0.2.1.1 screenshot: 
+
+
+= Using =
+
+Please install it and choose API Comparator from Tools menu. 
+
+Known Issues
+  * Sorting issues
+
+= Roadmap =
+  * Service Provider Interface for tree comparison
+  * GUI for API comparing
+  * Navigating by differences in tree
+  * Filters for comparison result
+  * Summary of comparison
+  * Export comparing results
+  * Support for directory structure and ZIP nested classes directory or JARs
+  * Support for Diff API
+
+= Changes =
+== 0.4 ==
+  * switched to maven for building/releasing
+  * IDEA 7 & 8 compatibility
+  * issue 2 : Make the Api Comparator dialog non modal
+
+== 0.3 ==
+  * switch to java 1.5 
+  * IDEA 6 & 7 compatible
+== 0.2.1.1 ==
+  * Aurora ported build
+  * Bug fixes
+
+== 0.2.1 ==
+  * Hide added/removed/changed filter option
+  * Progress monitor while comparison and snapshot loading
+  * View offline comparison results
+  * Bug fixes
+
+== 0.2 ==
+  * Export to plain text
+  * Saving size of dialogs
+  * Improvements in comparison engine (support for ProgressMonitor? in next version)
+  * Bug fixes
+
+== 0.1.1 == 
+
+  * DiffTool? support
+  * Bug fixes in configuration states
+
+== 0.1 == 
+  * Recent files
+  * Option to show only changes in tree
+  * Option to show/hide class members
+  * Show comparison results in one tree
+  * Whole changed core of plugin code
+== 0.0.2 == 
+  * Rewriten comparison engine
+  * Dialog with progress bar while processing
+  * GUI improvements
+  * All UI form rebuilded with UI designer
+
+== 0.0.1 == 
+  * Refactored Timur's Zambalayev tool for API comparison (many thanks, Timur)
+  * Simple GUI for comparator
+  * Simple plugin for IntelliJ IDEA
